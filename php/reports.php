@@ -32,9 +32,31 @@
         <div class="glass-card overflow-hidden">
             <div class="p-4 border-bottom border-zinc-800 d-flex justify-content-between align-items-center bg-zinc-950/20">
                 <h6 class="text-white fw-bold mb-0 italic">سجل المبيعات المالي</h6>
-                <div class="text-end">
-                    <span class="text-zinc-500 text-[10px] uppercase tracking-widest ml-3">إجمالي الفترة المحددة</span>
-                    <span class="text-amber-500 h5 fw-bold mb-0">14,230.50 ر.س</span>
+                <div class="d-flex gap-4">
+                    <!-- حساب إجمالي الطلبات المحلية -->
+                    <div class="text-end">
+                        <?php 
+                        $dinein_total = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE dining_option = 'DINEIN'")->fetchColumn();
+                        ?>
+                        <span class="text-zinc-500 text-[10px] uppercase tracking-widest d-block">إجمالي المحلي</span>
+                        <span class="text-white fw-bold"><?php echo formatCurrency($dinein_total ?? 0); ?></span>
+                    </div>
+                    <!-- حساب إجمالي الطلبات السفرية -->
+                    <div class="text-end">
+                        <?php 
+                        $takeaway_total = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE dining_option = 'TAKEAWAY'")->fetchColumn();
+                        ?>
+                        <span class="text-zinc-500 text-[10px] uppercase tracking-widest d-block">إجمالي السفري</span>
+                        <span class="text-white fw-bold"><?php echo formatCurrency($takeaway_total ?? 0); ?></span>
+                    </div>
+                    <!-- إجمالي الدخل الكلي -->
+                    <div class="text-end border-start border-zinc-800 ps-4">
+                        <?php 
+                        $period_total = $pdo->query("SELECT SUM(total_amount) FROM orders")->fetchColumn();
+                        ?>
+                        <span class="text-zinc-500 text-[10px] uppercase tracking-widest d-block">إجمالي الدخل</span>
+                        <span class="text-amber-500 h5 fw-bold mb-0"><?php echo formatCurrency($period_total ?? 0); ?></span>
+                    </div>
                 </div>
             </div>
             
@@ -44,8 +66,9 @@
                         <tr class="text-zinc-500 text-[10px] tracking-widest uppercase border-0">
                             <th class="px-4 py-3">رقم العملية</th>
                             <th class="px-4 py-3">التاريخ والوقت</th>
-                            <th class="px-4 py-3">الأصناف الملحقة</th>
-                            <th class="px-4 py-3 text-start">القيمة الإجمالية</th>
+                            <th class="px-4 py-3">نوع الطلب</th>
+                            <th class="px-4 py-3 text-center">الأصناف الملحقة</th>
+                            <th class="px-4 py-3 text-start">القيمة</th>
                         </tr>
                     </thead>
                     <tbody class="text-xs">
@@ -57,6 +80,11 @@
                             <td class="px-4 py-3 text-zinc-400">#INV-<?php echo str_pad($row['id'], 5, '0', STR_PAD_LEFT); ?></td>
                             <td class="px-4 py-3 text-zinc-600"><?php echo date('Y/m/d | H:i', strtotime($row['created_at'])); ?></td>
                             <td class="px-4 py-3">
+                                <span class="badge border-zinc-800 border bg-zinc-950 text-zinc-400 fw-bold px-2 py-1" style="font-size: 8px;">
+                                    <?php echo $row['dining_option'] == 'DINEIN' ? '🍽️ محلي' : '🥡 سفري'; ?>
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-center">
                                 <?php 
                                 // Fetch items for this order
                                 $items_stmt = $pdo->prepare("SELECT p.name_ar, oi.quantity FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?");

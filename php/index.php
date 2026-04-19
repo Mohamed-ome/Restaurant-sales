@@ -78,8 +78,26 @@
             </div>
 
             <div class="p-4 bg-zinc-950 border-top border-zinc-800">
-                <!-- Payment Method and Notes -->
+                <!-- قسم اختيار نوع الطلب وطريقة الدفع والملاحظات -->
                 <div class="mb-4">
+                    <!-- خيار سفري أو محلي -->
+                    <label class="text-zinc-500 text-[10px] fw-bold uppercase tracking-widest mb-2 d-block">نوع الطلب</label>
+                    <div class="d-flex gap-2 mb-3">
+                        <div class="flex-grow-1">
+                            <input type="radio" class="btn-check" name="dining_option" id="dine_local" value="DINEIN" autocomplete="off" checked>
+                            <label class="btn btn-outline-zinc w-100 py-2 text-[11px] fw-bold d-flex align-items-center justify-content-center gap-2" for="dine_local">
+                                <i data-lucide="utensils" style="width: 14px;"></i> محلي
+                            </label>
+                        </div>
+                        <div class="flex-grow-1">
+                            <input type="radio" class="btn-check" name="dining_option" id="dine_away" value="TAKEAWAY" autocomplete="off">
+                            <label class="btn btn-outline-zinc w-100 py-2 text-[11px] fw-bold d-flex align-items-center justify-content-center gap-2" for="dine_away">
+                                <i data-lucide="package" style="width: 14px;"></i> سفري
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- اختيار وسيلة الدفع (كاش أو بنكك) -->
                     <label class="text-zinc-500 text-[10px] fw-bold uppercase tracking-widest mb-2 d-block">طريقة الدفع</label>
                     <div class="d-flex gap-2 mb-3">
                         <div class="flex-grow-1">
@@ -246,10 +264,12 @@
         confirmBtn.disabled = true;
         confirmBtn.innerHTML = 'جاري المعالجة...';
 
+        // تجميع بيانات الطلب بما في ذلك النوع والوسيلة والملاحظات
         const orderData = {
             items: cart,
             total: cart.reduce((acc, item) => acc + (item.price * item.quantity), 0),
             payment_method: document.querySelector('input[name="payment_method"]:checked').value,
+            dining_option: document.querySelector('input[name="dining_option"]:checked').value,
             notes: document.getElementById('orderNotes').value
         };
 

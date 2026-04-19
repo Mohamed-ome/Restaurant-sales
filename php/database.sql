@@ -95,6 +95,7 @@ CREATE TABLE `orders` (
   `user_id` int(11) DEFAULT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `payment_method` enum('CASH','BANKAK') NOT NULL DEFAULT 'CASH',
+  `dining_option` enum('TAKEAWAY','DINEIN') NOT NULL DEFAULT 'DINEIN',
   `notes` text DEFAULT NULL,
   `status` enum('COMPLETED','CANCELLED') NOT NULL DEFAULT 'COMPLETED',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),

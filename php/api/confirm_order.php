@@ -21,11 +21,12 @@ try {
     $pdo->beginTransaction();
 
     // 1. Create Order
-    $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, payment_method, notes) VALUES (?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, payment_method, dining_option, notes) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([
         $_SESSION['user_id'] ?? null,
         $data['total'],
         $data['payment_method'] ?? 'CASH',
+        $data['dining_option'] ?? 'DINEIN',
         $data['notes'] ?? null
     ]);
     
