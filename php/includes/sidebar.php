@@ -10,29 +10,33 @@
     </div>
 
     <div class="nav flex-column gap-1">
+        <?php 
+        $current_page = basename($_SERVER['PHP_SELF']); 
+        function isActive($page, $current) { return ($page == $current) ? 'active' : ''; }
+        ?>
         <p class="text-zinc-500 uppercase tracking-wider mb-2 px-3" style="font-size: 9px; font-weight: 700;">الرئيسية</p>
         
-        <a href="index.php" class="nav-link">
+        <a href="index.php" class="nav-link <?php echo isActive('index.php', $current_page); ?>">
             <i data-lucide="store" style="width: 16px;"></i>
             <span>نقطة البيع</span>
         </a>
-        <a href="dashboard.php" class="nav-link">
+        <a href="dashboard.php" class="nav-link <?php echo isActive('dashboard.php', $current_page); ?>">
             <i data-lucide="layout-dashboard" style="width: 16px;"></i>
             <span>لوحة التحكم</span>
         </a>
-        <a href="menu.php" class="nav-link">
+        <a href="menu.php" class="nav-link <?php echo isActive('menu.php', $current_page); ?>">
             <i data-lucide="menu" style="width: 16px;"></i>
             <span>قائمة الطعام</span>
         </a>
-        <a href="inventory.php" class="nav-link">
+        <a href="inventory.php" class="nav-link <?php echo isActive('inventory.php', $current_page); ?>">
             <i data-lucide="package-search" style="width: 16px;"></i>
             <span>المخزون</span>
         </a>
-        <a href="reports.php" class="nav-link">
+        <a href="reports.php" class="nav-link <?php echo isActive('reports.php', $current_page); ?>">
             <i data-lucide="bar-chart-3" style="width: 16px;"></i>
             <span>التقارير</span>
         </a>
-        <a href="shipping.php" class="nav-link">
+        <a href="shipping.php" class="nav-link <?php echo isActive('shipping.php', $current_page); ?>">
             <i data-lucide="truck" style="width: 16px;"></i>
             <span>التوصيل</span>
         </a>
