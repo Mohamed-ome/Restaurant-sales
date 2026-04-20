@@ -43,8 +43,17 @@ export default function PosView() {
   const updateQuantity = (id: string, delta: number) => {
     setCart((prev) =>
       prev.map((item) =>
-        item.product.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-      )
+        item.product.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item
+      ).filter(item => item.quantity > 0)
+    );
+  };
+
+  const setQuantity = (id: string, value: number) => {
+    if (isNaN(value)) return;
+    setCart((prev) =>
+      prev.map((item) =>
+        item.product.id === id ? { ...item, quantity: Math.max(0, value) } : item
+      ).filter(item => item.quantity > 0)
     );
   };
 
@@ -190,30 +199,45 @@ export default function PosView() {
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
           {cart.map((item) => (
-            <div key={item.product.id} className="flex gap-3 bg-zinc-950/40 p-2.5 rounded-lg border border-transparent hover:border-zinc-800 transition-all group">
-              <div className="flex-1 min-w-0">
-                <h4 className="text-xs font-bold text-zinc-200 truncate">{item.product.nameAr} ({item.quantity})</h4>
-                <p className="text-[10px] text-zinc-500 tracking-wide">{(item.product.price * item.quantity).toFixed(2)} ر.س</p>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button 
-                  onClick={() => updateQuantity(item.product.id, -1)}
-                  className="w-5 h-5 rounded bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors"
-                >
-                  <Minus className="w-2.5 h-2.5" />
-                </button>
-                <button 
-                  onClick={() => updateQuantity(item.product.id, 1)}
-                  className="w-5 h-5 rounded bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors"
-                >
-                  <Plus className="w-2.5 h-2.5" />
-                </button>
+            <div key={item.product.id} className="flex flex-col gap-2 bg-zinc-950/40 p-3 rounded-xl border border-transparent hover:border-zinc-800 transition-all group">
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-xs font-bold text-zinc-200 truncate">{item.product.nameAr}</h4>
+                  <p className="text-[10px] text-zinc-500 tracking-wide">{(item.product.price * item.quantity).toFixed(2)} ر.س</p>
+                </div>
                 <button 
                   onClick={() => removeFromCart(item.product.id)}
-                  className="text-red-500/50 hover:text-red-500 transition-colors p-1"
+                  className="text-zinc-700 hover:text-red-500 transition-colors p-1"
                 >
                   <X className="w-3 h-3" />
                 </button>
+              </div>
+              
+              <div className="flex items-center justify-between mt-1 pt-2 border-t border-zinc-900/50">
+                <div className="flex items-center bg-zinc-900 rounded-lg p-0.5 border border-zinc-800">
+                  <button 
+                    onClick={() => updateQuantity(item.product.id, -1)}
+                    className="w-7 h-7 rounded-md bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <input 
+                    type="number"
+                    min="1"
+                    className="w-10 bg-transparent text-center text-xs font-bold text-zinc-100 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    value={item.quantity}
+                    onChange={(e) => setQuantity(item.product.id, parseInt(e.target.value))}
+                  />
+                  <button 
+                    onClick={() => updateQuantity(item.product.id, 1)}
+                    className="w-7 h-7 rounded-md bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+                <div className="text-[10px] font-bold text-amber-500/80">
+                  سعر الوحدة: {item.product.price}
+                </div>
               </div>
             </div>
           ))}
