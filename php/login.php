@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            border: 2px solid #27272a;
+            border: 2px solid var(--zinc-800);
             transition: all 0.2s;
         }
         .pin-dot.active {
@@ -55,16 +55,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 60px;
             font-size: 1.25rem;
             font-weight: 700;
-            background: rgba(24, 24, 27, 0.4);
-            border: 1px solid #18181b;
-            color: #d4d4d8;
+            background: var(--zinc-900);
+            border: 1px solid var(--zinc-800);
+            color: var(--bs-body-color);
             border-radius: 12px;
             transition: all 0.2s;
         }
         .numpad-btn:hover {
-            background: rgba(39, 39, 42, 0.6);
-            border-color: rgba(245, 158, 11, 0.3);
-            color: #fff;
+            background: var(--zinc-800);
+            border-color: var(--accent-color);
+            color: var(--bs-body-color);
         }
         .error-msg {
             font-size: 11px;
@@ -77,9 +77,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
         }
+        .theme-toggle-login {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
     </style>
 </head>
 <body class="bg-zinc-950">
+    <div class="theme-toggle-login">
+         <button class="btn btn-zinc-800 p-2 rounded-pill border-zinc-800 shadow-sm transition-all hover:scale-110" onclick="toggleTheme()" id="themeToggle">
+            <i data-lucide="sun" class="text-amber-500" style="width: 18px; height: 18px;"></i>
+         </button>
+    </div>
+
     <div class="login-container px-4">
         <div class="w-100" style="max-width: 360px;">
             <div class="text-center mb-5">
@@ -109,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <?php endfor; ?>
                     <div class="col-4">
-                        <button type="button" class="btn btn-link w-100 text-zinc-700 p-0 shadow-none" onclick="clearPin()">
+                        <button type="button" class="btn btn-link w-100 text-zinc-600 p-0 shadow-none" onclick="clearPin()">
                             <i data-lucide="delete" style="width: 20px;"></i>
                         </button>
                     </div>
@@ -120,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
             
             <div class="mt-5 pt-4 border-top border-zinc-900 text-center">
-                 <p class="text-zinc-800 text-[8px] uppercase tracking-tighter fw-black mb-0 italic">Secure POS Terminal Hardware Environment</p>
+                 <p class="text-zinc-600 text-[8px] uppercase tracking-tighter fw-black mb-0 italic">Secure POS Terminal Hardware Environment</p>
             </div>
         </div>
     </div>
@@ -136,6 +147,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
         const pinInput = document.getElementById('pinInput');
         const loginForm = document.getElementById('loginForm');
+
+        // Theme Management
+        function toggleTheme() {
+            const body = document.body;
+            const isLight = body.classList.toggle('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeIcon(isLight);
+        }
+
+        function updateThemeIcon(isLight) {
+            const icon = document.querySelector('#themeToggle i');
+            if (icon) {
+                icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+                icon.classList.remove('text-amber-500', 'text-zinc-500');
+                icon.classList.add(isLight ? 'text-zinc-500' : 'text-amber-500');
+                lucide.createIcons();
+            }
+        }
+
+        // Restore Theme
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                updateThemeIcon(true);
+            }
+        })();
 
         function addNumber(num) {
             if (currentPin.length < 4) {

@@ -1,38 +1,38 @@
 <?php include 'includes/header.php'; ?>
 
-<div class="row g-4">
+<div class="row g-2">
     <!-- Categories Section -->
     <div class="col-lg-4">
-        <div class="glass-card p-4">
-            <h6 class="text-white fw-bold mb-4 italic">إدارة الأقسام</h6>
-            <div class="space-y-2">
+        <div class="glass-card p-3">
+            <h6 class="text-white fw-bold mb-3 italic text-xs">إدارة الأقسام</h6>
+            <div class="space-y-1">
                 <!-- زر عرض الكل -->
-                <div class="d-flex justify-content-between align-items-center p-3 bg-amber-500/10 rounded-3 border border-amber-500/20 hover:bg-amber-500/20 transition-all cursor-pointer category-filter-btn active" 
+                <div class="d-flex justify-content-between align-items-center p-2 bg-amber-500/10 rounded-2 border border-amber-500/20 hover:bg-amber-500/20 transition-all cursor-pointer category-filter-btn active" 
                      onclick="filterProducts('all', this)">
-                    <span class="text-xs text-amber-500 fw-bold">عرض الكل</span>
-                    <i data-lucide="layout-grid" class="text-amber-500" style="width: 14px;"></i>
+                    <span class="text-[10px] text-amber-500 fw-bold">عرض الكل</span>
+                    <i data-lucide="layout-grid" class="text-amber-500" style="width: 12px;"></i>
                 </div>
 
                 <?php 
                 $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
                 foreach($categories as $cat): ?>
-                <div class="d-flex justify-content-between align-items-center p-3 bg-zinc-950 rounded-3 border border-zinc-800 hover:border-zinc-700 transition-all group cursor-pointer category-filter-btn"
+                <div class="d-flex justify-content-between align-items-center p-2 bg-zinc-950 rounded-2 border border-zinc-800 hover:border-zinc-700 transition-all group cursor-pointer category-filter-btn"
                      onclick="filterProducts(<?php echo $cat['id']; ?>, this)">
-                    <span class="text-xs text-white fw-bold"><?php echo $cat['name']; ?></span>
+                    <span class="text-[10px] text-white fw-bold"><?php echo $cat['name']; ?></span>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-link p-0 text-zinc-600 hover:text-amber-500" 
+                        <button class="btn btn-link p-0 text-zinc-700 hover:text-amber-500" 
                                 onclick="event.stopPropagation(); editCategory(<?php echo $cat['id']; ?>, '<?php echo $cat['name']; ?>', '<?php echo $cat['type']; ?>')">
-                            <i data-lucide="edit-3" style="width: 12px;"></i>
+                            <i data-lucide="edit-3" style="width: 10px;"></i>
                         </button>
-                        <button class="btn btn-link p-0 text-zinc-600 hover:text-red-500" 
+                        <button class="btn btn-link p-0 text-zinc-700 hover:text-red-500" 
                                 onclick="event.stopPropagation(); deleteData('category', <?php echo $cat['id']; ?>)">
-                            <i data-lucide="trash-2" style="width: 12px;"></i>
+                            <i data-lucide="trash-2" style="width: 10px;"></i>
                         </button>
                     </div>
                 </div>
                 <?php endforeach; ?>
             </div>
-            <button class="btn btn-outline-secondary w-full mt-4 border-dashed border-zinc-800 text-zinc-500 text-[10px] fw-bold py-2" data-bs-toggle="modal" data-bs-target="#categoryModal">
+            <button class="btn btn-outline-secondary w-full mt-3 border-dashed border-zinc-800 text-zinc-600 text-[9px] fw-bold py-1.5" data-bs-toggle="modal" data-bs-target="#categoryModal">
                 إضافة قسم جديد +
             </button>
         </div>
@@ -40,64 +40,63 @@
 
     <!-- Products Section -->
     <div class="col-lg-8">
-        <div class="glass-card p-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-                <div class="d-flex align-items-center gap-3">
-                    <h6 class="text-white fw-bold mb-0 italic">قائمة الطعام</h6>
-                    <div class="input-group" style="max-width: 250px;">
-                        <span class="input-group-text bg-zinc-900 border-zinc-800 text-zinc-600 rounded-start-pill b-l-0">
-                            <i data-lucide="search" style="width: 12px;"></i>
+        <div class="glass-card p-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <h6 class="text-white fw-bold mb-0 italic text-xs">قائمة الطعام</h6>
+                    <div class="input-group" style="max-width: 200px;">
+                        <span class="input-group-text bg-zinc-900 border-zinc-800 text-zinc-700 rounded-start-pill b-l-0">
+                            <i data-lucide="search" style="width: 10px;"></i>
                         </span>
-                        <input type="text" id="menuSearch" class="form-control bg-zinc-900 border-zinc-800 text-white rounded-end-pill shadow-none text-[10px]" placeholder="بحث في المنيو...">
+                        <input type="text" id="menuSearch" class="form-control bg-zinc-900 border-zinc-800 text-white rounded-end-pill shadow-none text-[9px]" placeholder="بحث في المنيو...">
                     </div>
                 </div>
-                <button class="btn btn-accent text-[10px] fw-bold px-4" data-bs-toggle="modal" data-bs-target="#productModal">إضافة صنف +</button>
+                <button class="btn btn-accent text-[9px] fw-bold px-3 py-1.5" data-bs-toggle="modal" data-bs-target="#productModal">إضافة صنف +</button>
             </div>
 
-            <div class="row row-cols-1 row-cols-md-2 g-3" id="productsContainer">
+            <div class="row row-cols-1 row-cols-md-2 g-2" id="productsContainer">
                 <?php 
                 $stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id ORDER BY c.name, p.name_ar");
                 $products = $stmt->fetchAll();
                 foreach($products as $item): ?>
                 <div class="col product-item" data-category="<?php echo $item['category_id']; ?>" data-search="<?php echo $item['name_ar']; ?>">
-                    <div class="p-3 bg-zinc-950/30 rounded-4 border border-zinc-900 d-flex gap-3 align-items-center hover:bg-zinc-950/50 transition-all">
-                        <div class="bg-zinc-900 rounded-3 text-center d-flex align-items-center justify-content-center border border-zinc-800 overflow-hidden" style="width: 60px; height: 60px; flex-shrink: 0;">
+                    <div class="p-2 bg-zinc-950/30 rounded-3 border border-zinc-900 d-flex gap-2 align-items-center hover:bg-zinc-950/50 transition-all">
+                        <div class="bg-zinc-900 rounded-2 text-center d-flex align-items-center justify-content-center border border-zinc-800 overflow-hidden" style="width: 44px; height: 44px; flex-shrink: 0;">
                             <?php if(!empty($item['image'])): ?>
-                                <img src="<?php echo $item['image']; ?>" class="w-100 h-100 object-fit-cover rounded-3 opacity-80">
+                                <img src="<?php echo $item['image']; ?>" class="w-100 h-100 object-fit-cover rounded-2 opacity-80" loading="lazy" referrerpolicy="no-referrer">
                             <?php else: ?>
-                                <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-20">
+                                <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-10">
                                     <rect width="100" height="100" fill="#18181b"/>
-                                    <circle cx="50" cy="50" r="30" stroke="#3f3f46" stroke-width="2"/>
-                                    <path d="M40 50H60M50 40V60" stroke="#3f3f46" stroke-width="2" stroke-linecap="round"/>
-                                    <rect x="25" y="25" width="50" height="50" rx="4" stroke="#27272a" stroke-width="1" stroke-dasharray="4 2"/>
+                                    <circle cx="50" cy="50" r="25" stroke="#3f3f46" stroke-width="2"/>
+                                    <path d="M42 50H58M50 42V58" stroke="#3f3f46" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
                             <?php endif; ?>
                         </div>
                         <div class="flex-grow-1 min-w-0">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <h6 class="text-zinc-200 fw-bold mb-0 text-xs text-truncate"><?php echo $item['name_ar']; ?></h6>
-                                    <p class="text-zinc-700 m-0" style="font-size: 8px;"><?php echo $item['category_name']; ?></p>
+                                    <h6 class="text-zinc-200 fw-bold mb-0 text-[10px] text-truncate"><?php echo $item['name_ar']; ?></h6>
+                                    <p class="text-zinc-700 m-0" style="font-size: 7px;"><?php echo $item['category_name']; ?></p>
                                 </div>
                                 <div class="text-end">
-                                    <div class="d-flex align-items-center bg-zinc-900 rounded-pill px-2 py-1 border border-zinc-800 focus-within:border-amber-500/50 transition-all">
+                                    <div class="d-flex align-items-center bg-zinc-900 rounded-pill px-1.5 py-0.5 border border-zinc-800 focus-within:border-amber-500/30 transition-all">
                                         <input type="number" step="0.01" 
-                                               class="bg-transparent border-0 text-amber-500 fw-bold text-[11px] w-12 text-center p-0 shadow-none outline-none price-quick-edit" 
+                                               class="bg-transparent border-0 text-amber-500 fw-bold text-[10px] w-10 text-center p-0 shadow-none outline-none price-quick-edit" 
                                                value="<?php echo $item['price']; ?>"
                                                onchange="quickUpdatePrice(<?php echo $item['id']; ?>, this)">
-                                        <span class="text-zinc-700 text-[9px] fw-bold me-1">ج.س</span>
+                                        <span class="text-zinc-700 text-[8px] fw-bold me-0.5">ج.س</span>
                                     </div>
                                 </div>
                             </div>
-                            <p class="text-zinc-600 mb-0 italic text-truncate mt-1" style="font-size: 9px;"><?php echo $item['ingredients']; ?></p>
+                            <p class="text-zinc-700 mb-0 italic text-truncate mt-0.5" style="font-size: 8px;"><?php echo $item['ingredients']; ?></p>
                         </div>
                         <div class="dropdown">
-                            <button class="btn btn-link text-zinc-700 p-0 shadow-none" data-bs-toggle="dropdown">
-                                <i data-lucide="more-vertical" style="width: 14px;"></i>
+                            <button class="btn btn-link text-zinc-800 p-0 shadow-none" data-bs-toggle="dropdown">
+                                <i data-lucide="more-vertical" style="width: 12px;"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-dark bg-zinc-900 border-zinc-800 shadow-xl">
-                                <li><a class="dropdown-item text-xs" href="javascript:void(0)" onclick='editProduct(<?php echo json_encode($item); ?>)'>تعديل</a></li>
-                                <li><a class="dropdown-item text-xs text-danger" href="javascript:void(0)" onclick="deleteData('product', <?php echo $item['id']; ?>)">حذف</a></li>
+                                <li><a class="dropdown-item text-[10px]" href="javascript:void(0)" onclick='editProduct(<?php echo json_encode($item); ?>)'>تعديل</a></li>
+                                <li><a class="dropdown-item text-[10px] text-danger" href="javascript:void(0)" onclick="deleteData('product', <?php echo $item['id']; ?>)">حذف</a></li>
                             </ul>
                         </div>
                     </div>

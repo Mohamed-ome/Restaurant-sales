@@ -29,25 +29,32 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php') {
 <?php include 'sidebar.php'; ?>
 <div class="main-content">
     <header class="header mb-4">
-        <div style="flex: 1;">
-             <!-- Left side empty to balance center -->
+        <div style="flex: 1;" class="d-flex align-items-center gap-2">
+             <button class="btn btn-zinc-800 p-2 d-lg-none" onclick="document.querySelector('.sidebar').classList.toggle('show')">
+                <i data-lucide="menu" style="width: 18px; height: 18px;"></i>
+             </button>
+             <!-- Left side empty for desktop alignment -->
         </div>
         
         <div style="flex: 2;" class="text-center">
-            <h4 class="mb-0 text-white fw-bold italic tracking-tighter">منتزه حاتم السياحي</h4>
-            <p class="text-zinc-600 mb-0" style="font-size: 8px; letter-spacing: 2px;">PREMIUM POS SYSTEM</p>
+            <h6 class="mb-0 text-white fw-bold italic tracking-tighter">منتزه حاتم السياحي</h6>
+            <p class="text-zinc-600 mb-0" style="font-size: 7px; letter-spacing: 2px;">PREMIUM POS SYSTEM</p>
         </div>
 
-        <div style="flex: 1;" class="d-flex justify-content-end align-items-center gap-3">
+        <div style="flex: 1;" class="d-flex justify-content-end align-items-center gap-2">
+             <button class="btn btn-zinc-800 p-1.5 rounded-pill border-zinc-700 shadow-sm transition-all hover:scale-110" onclick="toggleTheme()" id="themeToggle">
+                <i data-lucide="sun" class="text-amber-500" style="width: 14px; height: 14px;"></i>
+             </button>
+
              <div class="glass-card px-3 py-1 d-flex align-items-center gap-2">
                 <div class="bg-zinc-800 rounded p-1">
                     <i data-lucide="user" class="text-zinc-500" style="width: 14px; height: 14px;"></i>
                 </div>
-                <div class="text-end">
-                    <p class="mb-0 text-white fw-bold" style="font-size: 11px;">
+                <div class="text-end d-none d-sm-block">
+                    <p class="mb-0 text-white fw-bold" style="font-size: 10px;">
                         <?php echo $_SESSION['user_name'] ?? 'مستخدم'; ?>
                     </p>
-                    <p class="mb-0 text-zinc-500" style="font-size: 9px;">
+                    <p class="mb-0 text-zinc-500" style="font-size: 8px;">
                         <?php 
                         $role = $_SESSION['user_role'] ?? '';
                         if($role == 'ADMIN') echo 'مدير النظام';
