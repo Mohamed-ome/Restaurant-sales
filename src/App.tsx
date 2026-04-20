@@ -17,6 +17,7 @@ import MenuView from './components/MenuView';
 import InventoryView from './components/InventoryView';
 import ReportsView from './components/ReportsView';
 import ShippingView from './components/ShippingView';
+import SalesInsightsView from './components/SalesInsightsView';
 import LoginView from './components/LoginView';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -27,9 +28,10 @@ export default function App() {
   const navItems = [
     { id: 'pos', label: 'نقاط البيع', icon: Store, roles: ['ADMIN', 'MANAGER', 'WAITER'] },
     { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard, roles: ['ADMIN', 'MANAGER'] },
+    { id: 'sales_insights', label: 'تحليلات المبيعات', icon: BarChart3, roles: ['ADMIN', 'MANAGER'] },
     { id: 'menu', label: 'قائمة الطعام', icon: MenuIcon, roles: ['ADMIN', 'MANAGER'] },
     { id: 'inventory', label: 'المخزون', icon: PackageSearch, roles: ['ADMIN', 'MANAGER'] },
-    { id: 'reports', label: 'التقارير', icon: BarChart3, roles: ['ADMIN'] },
+    { id: 'reports', label: 'السجلات', icon: BarChart3, roles: ['ADMIN'] },
     { id: 'shipping', label: 'الشحن والتوصيل', icon: Truck, roles: ['ADMIN', 'MANAGER', 'WAITER'] },
   ];
 
@@ -143,6 +145,7 @@ export default function App() {
             >
               {activeView === 'dashboard' && <DashboardView />}
               {activeView === 'pos' && <PosView />}
+              {activeView === 'sales_insights' && <SalesInsightsView />}
               {activeView === 'menu' && <MenuView />}
               {activeView === 'inventory' && <InventoryView />}
               {activeView === 'reports' && <ReportsView />}
@@ -195,8 +198,12 @@ export default function App() {
           <div className="flex justify-end border-t-2 border-slate-900 pt-4">
             <div className="w-full max-w-[200px] space-y-1 text-sm">
               <div className="flex justify-between font-bold text-lg">
+                <span>طريقة الدفع:</span>
+                <span>---</span>
+              </div>
+              <div className="flex justify-between font-bold text-lg">
                 <span>الإجمالي:</span>
-                <span>--- ج.م</span>
+                <span>--- ج.س</span>
               </div>
             </div>
           </div>

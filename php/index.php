@@ -126,15 +126,15 @@
                 <div class="mb-4 space-y-2">
                     <div class="d-flex justify-content-between text-zinc-500 text-[11px]">
                         <span>المجموع الفرعي:</span>
-                        <span id="subTotal">0.00 ر.س</span>
+                        <span id="subTotal">0.00 ج.س</span>
                     </div>
                     <div class="d-flex justify-content-between text-zinc-500 text-[11px]">
                         <span>الضريبة (0%):</span>
-                        <span id="tax">0.00 ر.س</span>
+                        <span id="tax">0.00 ج.س</span>
                     </div>
                     <div class="d-flex justify-content-between pt-2 border-top border-zinc-800 mt-2">
                         <span class="text-zinc-400 fw-bold uppercase tracking-widest text-[10px]">الإجمالي:</span>
-                        <span class="text-amber-500 fw-bold h4 mb-0" id="grandTotal">0.00 ر.س</span>
+                        <span class="text-amber-500 fw-bold h4 mb-0" id="grandTotal">0.00 ج.س</span>
                     </div>
                 </div>
                 
@@ -185,13 +185,14 @@
         const cartContainer = document.getElementById('cartContainer');
         const emptyCart = document.getElementById('emptyCart');
         
-        if (cart.length === 0) {
-            cartContainer.innerHTML = '';
-            cartContainer.appendChild(emptyCart);
-            emptyCart.classList.remove('d-none');
-        } else {
-            emptyCart.classList.add('d-none');
-            cartContainer.innerHTML = cart.map((item, index) => {
+        if (emptyCart) {
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '';
+                cartContainer.appendChild(emptyCart);
+                emptyCart.classList.remove('d-none');
+            } else {
+                emptyCart.classList.add('d-none');
+                cartContainer.innerHTML = cart.map((item, index) => {
                 const imageHtml = item.image 
                     ? `<img src="${item.image}" class="w-100 h-100 object-fit-cover rounded-2 opacity-80">`
                     : `<svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-20">
@@ -208,7 +209,7 @@
                     <div class="flex-grow-1 min-w-0">
                         <h6 class="text-white text-[11px] fw-bold mb-0 text-truncate">${item.name}</h6>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="text-amber-500 fw-bold text-[10px]">${item.price} ر.س</span>
+                            <span class="text-amber-500 fw-bold text-[10px]">${item.price} ج.س</span>
                             <span class="text-zinc-600 text-[9px]">× ${item.quantity}</span>
                         </div>
                     </div>
@@ -239,8 +240,8 @@
 
     function calculateTotals() {
         const subTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-        document.getElementById('subTotal').innerText = subTotal.toFixed(2) + ' ر.س';
-        document.getElementById('grandTotal').innerText = subTotal.toFixed(2) + ' ر.س';
+        document.getElementById('subTotal').innerText = subTotal.toFixed(2) + ' ج.س';
+        document.getElementById('grandTotal').innerText = subTotal.toFixed(2) + ' ج.س';
     }
 
     // Search and Filter logic
@@ -260,10 +261,12 @@
             const matchQuery = name.includes(query) || ingredients.includes(query);
             const matchCat = !categoryId || cat === categoryId;
             
-            if (matchQuery && matchCat) {
-                p.classList.remove('d-none');
-            } else {
-                p.classList.add('d-none');
+            if (p) {
+                if (matchQuery && matchCat) {
+                    p.classList.remove('d-none');
+                } else {
+                    p.classList.add('d-none');
+                }
             }
         });
     }

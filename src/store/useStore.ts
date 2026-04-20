@@ -15,14 +15,14 @@ interface StoreState {
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
-  addOrder: (items: Order['items']) => void;
+  addOrder: (items: Order['items'], paymentMethod: Order['paymentMethod'], transactionId?: string) => void;
   
   // Auth Actions
   login: (pin: string) => boolean;
   logout: () => void;
   
   // UI State
-  activeView: 'dashboard' | 'pos' | 'menu' | 'inventory' | 'reports' | 'shipping';
+  activeView: 'dashboard' | 'pos' | 'menu' | 'inventory' | 'reports' | 'shipping' | 'sales_insights';
   setActiveView: (view: StoreState['activeView']) => void;
 }
 
@@ -81,7 +81,7 @@ export const useStore = create<StoreState>()(
         products: state.products.filter((p) => p.id !== id)
       })),
       
-      addOrder: (items) => {
+      addOrder: (items, paymentMethod, transactionId) => {
         const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
         const newOrder: Order = {
           id: `ORD-${Date.now()}`,
@@ -89,6 +89,8 @@ export const useStore = create<StoreState>()(
           total,
           timestamp: Date.now(),
           status: 'COMPLETED',
+          paymentMethod,
+          transactionId
         };
         
         // Update stock

@@ -16,6 +16,6 @@ try {
 
 // Global Help Functions
 function formatCurrency($amount) {
-    return number_format($amount, 2) . ' ر.س';
+    return number_format($amount, 2) . ' ج.س';
 }
 ?>

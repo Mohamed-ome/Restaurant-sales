@@ -30,6 +30,8 @@ export interface Order {
   total: number;
   timestamp: number;
   status: 'COMPLETED' | 'CANCELLED';
+  paymentMethod: 'CASH' | 'BANKAK';
+  transactionId?: string; // 4-digit reference for Bankak
 }
 
 export type UserRole = 'ADMIN' | 'MANAGER' | 'WAITER';

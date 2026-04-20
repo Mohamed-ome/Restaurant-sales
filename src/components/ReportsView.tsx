@@ -45,19 +45,20 @@ export default function ReportsView() {
     doc.setFontSize(12);
     doc.setTextColor(100);
     doc.text(`تاريخ الاستخراج: ${format(new Date(), 'yyyy/MM/dd | HH:mm:ss', { locale: ar })}`, 40, 75);
-    doc.text(`إجمالي المبيعات: ${totalSales.toFixed(2)} EGP`, 40, 95);
+    doc.text(`إجمالي المبيعات: ${totalSales.toFixed(2)} ج.س`, 40, 95);
     doc.text(`الفترة: ${startDate ? format(startDate, 'yyyy/MM/dd') : 'من البداية'} إلى ${endDate ? format(endDate, 'yyyy/MM/dd') : 'الآن'}`, 40, 115);
 
     const tableRows = filteredOrders.map(order => [
       `#${(order.id.split('-')[1] || '').slice(-6)}`,
       format(order.timestamp, 'yyyy-MM-dd HH:mm'),
+      order.paymentMethod === 'BANKAK' ? `بنكك (${order.transactionId})` : 'نقدي',
       order.items.map(i => `${i.productName} (x${i.quantity})`).join(', '),
       `${order.total.toFixed(2)}`
     ]);
 
     autoTable(doc, {
       startY: 140,
-      head: [['رقم العملية', 'التاريخ والوقت', 'الأصناف', 'المجموع (جنيه)']],
+      head: [['رقم العملية', 'التاريخ والوقت', 'طريقة الدفع', 'الأصناف', 'المجموع (جنيه)']],
       body: tableRows,
       theme: 'striped',
       headStyles: { fillColor: [245, 158, 11] }, // Amber 500
@@ -204,6 +205,7 @@ export default function ReportsView() {
               <tr className="bg-zinc-950/50 text-zinc-500 border-b border-zinc-800">
                 <th className="px-6 py-4 font-bold uppercase tracking-wider">العملية</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider">التاريخ</th>
+                <th className="px-6 py-4 font-bold uppercase tracking-wider">طريقة الدفع</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider">الأصناف</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-left">المبلغ</th>
               </tr>
@@ -213,6 +215,16 @@ export default function ReportsView() {
                 <tr key={order.id} className="hover:bg-zinc-800/30 transition-colors">
                   <td className="px-6 py-4 font-bold text-zinc-300">#{(order.id.split('-')[1] || '').slice(-6)}</td>
                   <td className="px-6 py-4 text-zinc-500">{format(order.timestamp, 'yyyy/MM/dd | HH:mm', { locale: ar })}</td>
+                  <td className="px-6 py-4">
+                    {order.paymentMethod === 'BANKAK' ? (
+                      <div className="flex flex-col">
+                        <span className="text-blue-400 font-bold">تطبيق بنكك</span>
+                        <span className="text-[10px] text-zinc-600 font-mono">Ref: {order.transactionId}</span>
+                      </div>
+                    ) : (
+                      <span className="text-zinc-500">نقدي</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
                       {order.items.map((item, idx) => (

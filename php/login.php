@@ -158,10 +158,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         function updateDots() {
             dots.forEach((dot, index) => {
-                if (index < currentPin.length) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
+                if (dot) {
+                    if (index < currentPin.length) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
                 }
             });
         }

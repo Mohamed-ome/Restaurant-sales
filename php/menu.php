@@ -85,7 +85,7 @@
                                                class="bg-transparent border-0 text-amber-500 fw-bold text-[11px] w-12 text-center p-0 shadow-none outline-none price-quick-edit" 
                                                value="<?php echo $item['price']; ?>"
                                                onchange="quickUpdatePrice(<?php echo $item['id']; ?>, this)">
-                                        <span class="text-zinc-700 text-[9px] fw-bold me-1">ر.س</span>
+                                        <span class="text-zinc-700 text-[9px] fw-bold me-1">ج.س</span>
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +166,7 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-zinc-500 text-[10px] fw-bold uppercase tracking-widest mb-2 d-block">السعر (ر.س)</label>
+                            <label class="text-zinc-500 text-[10px] fw-bold uppercase tracking-widest mb-2 d-block">السعر (ج.س)</label>
                             <input type="number" step="0.01" name="price" id="prod_price" class="form-control bg-zinc-900 border-zinc-800 text-white rounded-3 shadow-none text-xs" required>
                         </div>
                         <div class="col-md-6">
@@ -317,32 +317,47 @@ function filterProducts(categoryId, btn) {
     activeCategoryId = categoryId;
     // تحديث حالة الأزرار
     document.querySelectorAll('.category-filter-btn').forEach(el => {
-        el.classList.remove('active', 'bg-amber-500/10', 'border-amber-500/20');
-        el.classList.add('bg-zinc-950', 'border-zinc-800');
-        el.querySelector('span').classList.remove('text-amber-500');
-        el.querySelector('span').classList.add('text-white');
+        if (el) {
+            el.classList.remove('active', 'bg-amber-500/10', 'border-amber-500/20');
+            el.classList.add('bg-zinc-950', 'border-zinc-800');
+            const span = el.querySelector('span');
+            if (span) {
+                span.classList.remove('text-amber-500');
+                span.classList.add('text-white');
+            }
+        }
     });
     
-    btn.classList.add('active', 'bg-amber-500/10', 'border-amber-500/20');
-    btn.classList.remove('bg-zinc-950', 'border-zinc-800');
-    btn.querySelector('span').classList.remove('text-white');
-    btn.querySelector('span').classList.add('text-amber-500');
+    if (btn) {
+        btn.classList.add('active', 'bg-amber-500/10', 'border-amber-500/20');
+        btn.classList.remove('bg-zinc-950', 'border-zinc-800');
+        const span = btn.querySelector('span');
+        if (span) {
+            span.classList.remove('text-white');
+            span.classList.add('text-amber-500');
+        }
+    }
 
     applyFilters();
 }
 
 function applyFilters() {
-    const query = document.getElementById('menuSearch').value.toLowerCase();
+    const searchInputEl = document.getElementById('menuSearch');
+    if (!searchInputEl) return;
+    const query = searchInputEl.value.toLowerCase();
     const items = document.querySelectorAll('.product-item');
     
     items.forEach(item => {
-        const matchCategory = (activeCategoryId === 'all' || item.getAttribute('data-category') == activeCategoryId);
-        const matchSearch = item.getAttribute('data-search').toLowerCase().includes(query);
-        
-        if (matchCategory && matchSearch) {
-            item.classList.remove('d-none');
-        } else {
-            item.classList.add('d-none');
+        if (item) {
+            const matchCategory = (activeCategoryId === 'all' || item.getAttribute('data-category') == activeCategoryId);
+            const dataSearch = item.getAttribute('data-search');
+            const matchSearch = dataSearch ? dataSearch.toLowerCase().includes(query) : true;
+            
+            if (matchCategory && matchSearch) {
+                item.classList.remove('d-none');
+            } else {
+                item.classList.add('d-none');
+            }
         }
     });
 }
@@ -355,8 +370,14 @@ handleSubmit('productForm', 'save_product.php');
 // Reset forms on close
 document.querySelectorAll('.modal').forEach(m => {
     m.addEventListener('hidden.bs.modal', () => {
-        m.querySelector('form').reset();
-        m.querySelector('input[type="hidden"]').value = '';
+        const form = m.querySelector('form');
+        if (form) {
+            form.reset();
+            const hiddenInput = form.querySelector('input[type="hidden"]');
+            if (hiddenInput) {
+                hiddenInput.value = '';
+            }
+        }
     });
 });
 </script>

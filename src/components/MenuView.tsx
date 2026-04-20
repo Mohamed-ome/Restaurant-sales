@@ -83,7 +83,7 @@ export default function MenuView() {
               <h3 className="font-bold text-zinc-100 mb-1">{product.nameAr}</h3>
               <p className="text-[10px] text-zinc-500 mb-3 truncate">{product.ingredients.join(' • ')}</p>
               <div className="flex justify-between items-center">
-                <span className="text-amber-500 font-bold">{product.price} ر.س</span>
+                <span className="text-amber-500 font-bold">{product.price} ج.س</span>
                 <span className="text-[9px] bg-zinc-800 text-zinc-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">
                   {categories.find(c => c.id === product.categoryId)?.name || 'عام'}
                 </span>
@@ -121,7 +121,7 @@ export default function MenuView() {
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-right">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase pr-1">السعر (ر.س)</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase pr-1">السعر (ج.س)</label>
                     <input 
                       type="number"
                       className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 focus:border-amber-500 outline-none text-zinc-100 text-sm" 

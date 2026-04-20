@@ -9,7 +9,7 @@
                 <?php 
                 $today_sales = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn();
                 ?>
-                <h3 class="text-white fw-bold mb-0"><?php echo number_format($today_sales ?? 0, 0); ?> <small class="fs-6 fw-normal">ر.س</small></h3>
+                <h3 class="text-white fw-bold mb-0"><?php echo number_format($today_sales ?? 0, 0); ?> <small class="fs-6 fw-normal">ج.س</small></h3>
                 <span class="text-amber-500 text-[10px] fw-bold">+0%</span>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <?php 
                 $avg_order = $pdo->query("SELECT AVG(total_amount) FROM orders")->fetchColumn();
                 ?>
-                <h3 class="text-white fw-bold mb-0"><?php echo number_format($avg_order ?? 0, 0); ?> <small class="fs-6 fw-normal">ر.س</small></h3>
+                <h3 class="text-white fw-bold mb-0"><?php echo number_format($avg_order ?? 0, 0); ?> <small class="fs-6 fw-normal">ج.س</small></h3>
                 <i data-lucide="trending-up" class="text-zinc-800" style="width: 24px;"></i>
             </div>
         </div>

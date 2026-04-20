@@ -4,6 +4,7 @@ import { Search, ShoppingCart, Trash2, Printer, Plus, Minus, X, Utensils, User a
 import { motion, AnimatePresence } from 'motion/react';
 import { formatCurrency, cn } from '../lib/utils';
 import { Product } from '../types';
+import Fuse from 'fuse.js';
 
 export default function PosView() {
   const { products, categories, addOrder } = useStore();
@@ -13,15 +14,34 @@ export default function PosView() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [showPrintMenu, setShowPrintMenu] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'BANKAK'>('CASH');
+  const [transactionId, setTransactionId] = useState('');
 
   const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
-                            p.nameAr.includes(search) ||
-                            p.ingredients.some(i => i.includes(search));
-      const matchesCategory = selectedCategory === 'all' || p.categoryId === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
+    let results = products;
+
+    // Filter by category first
+    if (selectedCategory !== 'all') {
+      results = results.filter(p => p.categoryId === selectedCategory);
+    }
+
+    // Apply fuzzy search if search term exists
+    if (search.trim()) {
+      const fuse = new Fuse(results, {
+        keys: [
+          { name: 'nameAr', weight: 0.7 },
+          { name: 'name', weight: 0.5 },
+          { name: 'ingredients', weight: 0.3 }
+        ],
+        threshold: 0.4,
+        distance: 100,
+        useExtendedSearch: true,
+      });
+
+      results = fuse.search(search).map(r => r.item);
+    }
+
+    return results;
   }, [products, search, selectedCategory]);
 
   const addToCart = (product: Product) => {
@@ -61,15 +81,27 @@ export default function PosView() {
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
+    setIsCheckoutOpen(true);
+  };
+
+  const confirmOrder = () => {
+    if (paymentMethod === 'BANKAK' && transactionId.length !== 4) {
+      alert('يرجى إدخال رقم العملية (4 أرقام)');
+      return;
+    }
+
     const orderItems = cart.map(item => ({
       productId: item.product.id,
       productName: item.product.nameAr,
       quantity: item.quantity,
       price: item.product.price,
     }));
-    addOrder(orderItems);
+    
+    addOrder(orderItems, paymentMethod, transactionId);
     setCart([]);
     setIsCheckoutOpen(false);
+    setPaymentMethod('CASH');
+    setTransactionId('');
   };
 
   const printInvoice = (type: 'customer' | 'kitchen') => {
@@ -158,7 +190,7 @@ export default function PosView() {
               </div>
               <div className="flex justify-between items-start mb-1 overflow-hidden">
                 <h3 className="font-bold text-zinc-100 text-xs truncate flex-1">{product.nameAr}</h3>
-                <span className="text-amber-500 font-bold text-xs mr-2 shrink-0">{product.price} ر.س</span>
+                <span className="text-amber-500 font-bold text-xs mr-2 shrink-0">{product.price} ج.س</span>
               </div>
               <p className="text-zinc-500 text-[10px] truncate leading-tight">{product.ingredients.join('، ')}</p>
               
@@ -203,7 +235,7 @@ export default function PosView() {
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1 min-w-0">
                   <h4 className="text-xs font-bold text-zinc-200 truncate">{item.product.nameAr}</h4>
-                  <p className="text-[10px] text-zinc-500 tracking-wide">{(item.product.price * item.quantity).toFixed(2)} ر.س</p>
+                  <p className="text-[10px] text-zinc-500 tracking-wide">{(item.product.price * item.quantity).toFixed(2)} ج.س</p>
                 </div>
                 <button 
                   onClick={() => removeFromCart(item.product.id)}
@@ -253,15 +285,15 @@ export default function PosView() {
           <div className="space-y-1.5">
             <div className="flex justify-between items-center text-xs text-zinc-500">
               <span>المجموع الفرعي:</span>
-              <span>{(cartTotal * 0.86).toFixed(2)} ر.س</span>
+              <span>{(cartTotal * 0.86).toFixed(2)} ج.س</span>
             </div>
             <div className="flex justify-between items-center text-xs text-zinc-500">
               <span>الضريبة (14%):</span>
-              <span>{(cartTotal * 0.14).toFixed(2)} ر.س</span>
+              <span>{(cartTotal * 0.14).toFixed(2)} ج.س</span>
             </div>
             <div className="flex justify-between items-center pt-2 border-t border-zinc-800">
               <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">الإجمالي:</span>
-              <span className="text-xl font-bold text-amber-500">{(cartTotal).toFixed(2)} ر.س</span>
+              <span className="text-xl font-bold text-amber-500">{(cartTotal).toFixed(2)} ج.س</span>
             </div>
           </div>
           
@@ -323,6 +355,101 @@ export default function PosView() {
         </div>
       </div>
     </div>
+
+    {/* Checkout Modal */}
+    <AnimatePresence>
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-[200] p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsCheckoutOpen(false)}
+            className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm"
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            className="relative w-full max-w-sm glass-card p-6 flex flex-col gap-6 rounded-2xl"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-zinc-100 italic">إتمام الدفع</h3>
+              <button 
+                onClick={() => setIsCheckoutOpen(false)}
+                className="p-1.5 text-zinc-600 hover:text-zinc-100 bg-zinc-800 rounded-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-zinc-950/50 p-4 rounded-xl border border-zinc-800 flex justify-between items-center">
+                <span className="text-sm font-bold text-zinc-400">الإجمالي المطلوب:</span>
+                <span className="text-2xl font-black text-amber-500">{cartTotal.toFixed(2)} ج.س</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setPaymentMethod('CASH')}
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-4 rounded-xl border transition-all",
+                    paymentMethod === 'CASH' 
+                      ? "bg-amber-600/10 border-amber-500 text-amber-500" 
+                      : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                  )}
+                >
+                  <span className="text-xl">💵</span>
+                  <span className="text-xs font-bold">دفع نقدي</span>
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('BANKAK')}
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-4 rounded-xl border transition-all",
+                    paymentMethod === 'BANKAK' 
+                      ? "bg-blue-600/10 border-blue-500 text-blue-500" 
+                      : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                  )}
+                >
+                  <span className="text-xl">📱</span>
+                  <span className="text-xs font-bold">تطبيق بنكك</span>
+                </button>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {paymentMethod === 'BANKAK' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="flex flex-col gap-2 mt-2">
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase pr-1">رقم العملية (آخر 4 أرقام)</label>
+                      <input 
+                        type="text"
+                        maxLength={4}
+                        placeholder="0000"
+                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-center text-xl font-mono font-bold tracking-[0.5em] text-blue-400 focus:border-blue-500 outline-none"
+                        value={transactionId}
+                        onChange={(e) => setTransactionId(e.target.value.replace(/\D/g, ''))}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <button 
+              onClick={confirmOrder}
+              className="w-full py-4 bg-amber-600 text-zinc-950 rounded-xl text-sm font-black hover:bg-amber-500 transition-all shadow-lg shadow-amber-900/20 active:scale-[0.98]"
+            >
+              تأكيد العملية وحفظ الطلب
+            </button>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
 
     {/* Confirmation Modal */}
     <AnimatePresence>
