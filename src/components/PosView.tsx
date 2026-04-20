@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
-import { Search, ShoppingCart, Trash2, Printer, Plus, Minus, X } from 'lucide-react';
+import { Search, ShoppingCart, Trash2, Printer, Plus, Minus, X, Utensils, User as UserIcon, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatCurrency, cn } from '../lib/utils';
 import { Product } from '../types';
@@ -12,6 +12,7 @@ export default function PosView() {
   const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showPrintMenu, setShowPrintMenu] = useState(false);
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -62,8 +63,13 @@ export default function PosView() {
     setIsCheckoutOpen(false);
   };
 
-  const printInvoice = () => {
+  const printInvoice = (type: 'customer' | 'kitchen') => {
+    // We set the print type in the store or as a global variable that App.tsx can read
+    // or we can use a class on the body to control visibility in CSS
+    document.body.classList.remove('print-customer', 'print-kitchen');
+    document.body.classList.add(`print-${type}`);
     window.print();
+    setShowPrintMenu(false);
   };
 
   return (
@@ -236,14 +242,51 @@ export default function PosView() {
           </div>
           
           <div className="grid grid-cols-2 gap-2 pt-2">
-            <button
-              disabled={cart.length === 0}
-              onClick={printInvoice}
-              className="flex flex-col items-center justify-center py-2.5 bg-zinc-800 text-zinc-300 rounded-lg text-[10px] font-bold hover:bg-zinc-700 transition-colors disabled:opacity-30"
-            >
-              <Printer className="w-3.5 h-3.5 mb-1 text-zinc-500" />
-              طباعة
-            </button>
+            <div className="relative">
+              <button
+                disabled={cart.length === 0}
+                onClick={() => setShowPrintMenu(!showPrintMenu)}
+                className="w-full flex flex-col items-center justify-center py-2.5 bg-zinc-800 text-zinc-300 rounded-lg text-[10px] font-bold hover:bg-zinc-700 transition-colors disabled:opacity-30"
+              >
+                <div className="flex items-center gap-1 mb-1">
+                  <Printer className="w-3.5 h-3.5 text-zinc-500" />
+                  <ChevronDown className={cn("w-3 h-3 transition-transform", showPrintMenu && "rotate-180")} />
+                </div>
+                طباعة
+              </button>
+
+              <AnimatePresence>
+                {showPrintMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute bottom-full mb-2 left-0 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden"
+                  >
+                    <button
+                      onClick={() => printInvoice('customer')}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 text-zinc-100 transition-colors border-b border-zinc-800"
+                    >
+                      <UserIcon className="w-3.5 h-3.5 text-blue-400" />
+                      <div className="text-right">
+                        <p className="text-[11px] font-bold">فاتورة العميل</p>
+                        <p className="text-[9px] text-zinc-500">تفصيلية مع السعر والضريبة</p>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => printInvoice('kitchen')}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 text-zinc-100 transition-colors"
+                    >
+                      <Utensils className="w-3.5 h-3.5 text-amber-500" />
+                      <div className="text-right">
+                        <p className="text-[11px] font-bold">بون المطبخ</p>
+                        <p className="text-[9px] text-zinc-500">أصناف وكميات فقط للتجهيز</p>
+                      </div>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <button
               disabled={cart.length === 0}
               onClick={handleCheckout}

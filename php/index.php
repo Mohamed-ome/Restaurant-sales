@@ -36,7 +36,11 @@
                         <?php if(!empty($p['image'])): ?>
                              <img src="<?php echo $p['image']; ?>" class="w-100 h-100 object-fit-cover opacity-75">
                         <?php else: ?>
-                            <span class="text-zinc-800 fs-3 fw-bold"><?php echo mb_substr($p['name_ar'], 0, 1); ?></span>
+                            <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-20">
+                                <rect width="100" height="100" fill="#09090b"/>
+                                <circle cx="50" cy="50" r="30" stroke="#3f3f46" stroke-width="2"/>
+                                <path d="M40 50H60M50 40V60" stroke="#3f3f46" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
                         <?php endif; ?>
                         
                         <?php if($p['in_stock'] <= $p['min_threshold']): ?>
@@ -51,6 +55,7 @@
                     <button class="btn btn-accent w-full py-1.5 rounded-2 text-[10px] uppercase add-to-cart" 
                             data-id="<?php echo $p['id']; ?>" 
                             data-name="<?php echo $p['name_ar']; ?>" 
+                            data-image="<?php echo $p['image'] ?? ''; ?>"
                             data-price="<?php echo $p['price']; ?>">إضافة للفاتورة</button>
                 </div>
             </div>
@@ -161,6 +166,7 @@
             const product = {
                 id: btn.dataset.id,
                 name: btn.dataset.name,
+                image: btn.dataset.image,
                 price: parseFloat(btn.dataset.price),
                 quantity: 1
             };
@@ -185,25 +191,38 @@
             emptyCart.classList.remove('d-none');
         } else {
             emptyCart.classList.add('d-none');
-            cartContainer.innerHTML = cart.map((item, index) => `
-                <div class="d-flex align-items-center gap-3 p-3 bg-zinc-950 rounded-3 border border-zinc-800">
-                    <div class="flex-grow-1">
-                        <h6 class="text-white text-xs fw-bold mb-1">${item.name}</h6>
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="text-amber-500 fw-bold text-xs">${item.price} ر.س</span>
-                            <span class="text-zinc-600 text-[10px]">× ${item.quantity}</span>
+            cartContainer.innerHTML = cart.map((item, index) => {
+                const imageHtml = item.image 
+                    ? `<img src="${item.image}" class="w-100 h-100 object-fit-cover rounded-2 opacity-80">`
+                    : `<svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-20">
+                            <rect width="100" height="100" fill="#18181b"/>
+                            <circle cx="50" cy="50" r="30" stroke="#3f3f46" stroke-width="2"/>
+                            <path d="M40 50H60M50 40V60" stroke="#3f3f46" stroke-width="2" stroke-linecap="round"/>
+                       </svg>`;
+
+                return `
+                <div class="d-flex align-items-center gap-3 p-2 bg-zinc-950 rounded-3 border border-zinc-800">
+                    <div class="bg-zinc-900 rounded-2 border border-zinc-800 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        ${imageHtml}
+                    </div>
+                    <div class="flex-grow-1 min-w-0">
+                        <h6 class="text-white text-[11px] fw-bold mb-0 text-truncate">${item.name}</h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-amber-500 fw-bold text-[10px]">${item.price} ر.س</span>
+                            <span class="text-zinc-600 text-[9px]">× ${item.quantity}</span>
                         </div>
                     </div>
                     <div class="d-flex gap-1">
                         <button class="btn btn-zinc-800 p-1 text-zinc-500" onclick="updateQty(${index}, -1)">
-                            <i data-lucide="minus" style="width: 12px; height: 12px;"></i>
+                            <i data-lucide="minus" style="width: 10px; height: 10px;"></i>
                         </button>
                         <button class="btn btn-zinc-800 p-1 text-zinc-500" onclick="updateQty(${index}, 1)">
-                            <i data-lucide="plus" style="width: 12px; height: 12px;"></i>
+                            <i data-lucide="plus" style="width: 10px; height: 10px;"></i>
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
             lucide.createIcons();
         }
         

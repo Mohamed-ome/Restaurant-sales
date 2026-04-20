@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="bg-zinc-900 rounded-4 p-3 d-inline-flex mb-4 border border-zinc-800 shadow-xl">
                     <i data-lucide="lock" class="text-amber-500" style="width: 32px; height: 32px;"></i>
                 </div>
-                <h4 class="text-white fw-bold italic mb-2">منظومة مطعم المنطقة</h4>
+                <h4 class="text-white fw-bold italic mb-2">منظومة منتزه حاتم السياحي</h4>
                 <p class="text-zinc-600 text-[10px] uppercase tracking-widest fw-bold">أدخل رمز المرور للمتابعة</p>
                 <?php if($error): ?>
                     <div class="error-msg"><?php echo $error; ?></div>

@@ -6,18 +6,26 @@
         <div class="glass-card p-4">
             <h6 class="text-white fw-bold mb-4 italic">إدارة الأقسام</h6>
             <div class="space-y-2">
+                <!-- زر عرض الكل -->
+                <div class="d-flex justify-content-between align-items-center p-3 bg-amber-500/10 rounded-3 border border-amber-500/20 hover:bg-amber-500/20 transition-all cursor-pointer category-filter-btn active" 
+                     onclick="filterProducts('all', this)">
+                    <span class="text-xs text-amber-500 fw-bold">عرض الكل</span>
+                    <i data-lucide="layout-grid" class="text-amber-500" style="width: 14px;"></i>
+                </div>
+
                 <?php 
                 $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
                 foreach($categories as $cat): ?>
-                <div class="d-flex justify-content-between align-items-center p-3 bg-zinc-950 rounded-3 border border-zinc-800 hover:border-amber-500/20 transition-all group">
+                <div class="d-flex justify-content-between align-items-center p-3 bg-zinc-950 rounded-3 border border-zinc-800 hover:border-zinc-700 transition-all group cursor-pointer category-filter-btn"
+                     onclick="filterProducts(<?php echo $cat['id']; ?>, this)">
                     <span class="text-xs text-white fw-bold"><?php echo $cat['name']; ?></span>
                     <div class="d-flex gap-2">
                         <button class="btn btn-link p-0 text-zinc-600 hover:text-amber-500" 
-                                onclick="editCategory(<?php echo $cat['id']; ?>, '<?php echo $cat['name']; ?>', '<?php echo $cat['type']; ?>')">
+                                onclick="event.stopPropagation(); editCategory(<?php echo $cat['id']; ?>, '<?php echo $cat['name']; ?>', '<?php echo $cat['type']; ?>')">
                             <i data-lucide="edit-3" style="width: 12px;"></i>
                         </button>
                         <button class="btn btn-link p-0 text-zinc-600 hover:text-red-500" 
-                                onclick="deleteData('category', <?php echo $cat['id']; ?>)">
+                                onclick="event.stopPropagation(); deleteData('category', <?php echo $cat['id']; ?>)">
                             <i data-lucide="trash-2" style="width: 12px;"></i>
                         </button>
                     </div>
@@ -33,23 +41,36 @@
     <!-- Products Section -->
     <div class="col-lg-8">
         <div class="glass-card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="text-white fw-bold mb-0 italic">قائمة الطعام</h6>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <h6 class="text-white fw-bold mb-0 italic">قائمة الطعام</h6>
+                    <div class="input-group" style="max-width: 250px;">
+                        <span class="input-group-text bg-zinc-900 border-zinc-800 text-zinc-600 rounded-start-pill b-l-0">
+                            <i data-lucide="search" style="width: 12px;"></i>
+                        </span>
+                        <input type="text" id="menuSearch" class="form-control bg-zinc-900 border-zinc-800 text-white rounded-end-pill shadow-none text-[10px]" placeholder="بحث في المنيو...">
+                    </div>
+                </div>
                 <button class="btn btn-accent text-[10px] fw-bold px-4" data-bs-toggle="modal" data-bs-target="#productModal">إضافة صنف +</button>
             </div>
 
-            <div class="row row-cols-1 row-cols-md-2 g-3">
+            <div class="row row-cols-1 row-cols-md-2 g-3" id="productsContainer">
                 <?php 
                 $stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id ORDER BY c.name, p.name_ar");
                 $products = $stmt->fetchAll();
                 foreach($products as $item): ?>
-                <div class="col">
+                <div class="col product-item" data-category="<?php echo $item['category_id']; ?>" data-search="<?php echo $item['name_ar']; ?>">
                     <div class="p-3 bg-zinc-950/30 rounded-4 border border-zinc-900 d-flex gap-3 align-items-center hover:bg-zinc-950/50 transition-all">
-                        <div class="bg-zinc-900 rounded-3 text-center d-flex align-items-center justify-content-center border border-zinc-800" style="width: 60px; height: 60px; flex-shrink: 0;">
+                        <div class="bg-zinc-900 rounded-3 text-center d-flex align-items-center justify-content-center border border-zinc-800 overflow-hidden" style="width: 60px; height: 60px; flex-shrink: 0;">
                             <?php if(!empty($item['image'])): ?>
                                 <img src="<?php echo $item['image']; ?>" class="w-100 h-100 object-fit-cover rounded-3 opacity-80">
                             <?php else: ?>
-                                <span class="text-zinc-700 fw-bold fs-4"><?php echo mb_substr($item['name_ar'], 0, 1); ?></span>
+                                <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-20">
+                                    <rect width="100" height="100" fill="#18181b"/>
+                                    <circle cx="50" cy="50" r="30" stroke="#3f3f46" stroke-width="2"/>
+                                    <path d="M40 50H60M50 40V60" stroke="#3f3f46" stroke-width="2" stroke-linecap="round"/>
+                                    <rect x="25" y="25" width="50" height="50" rx="4" stroke="#27272a" stroke-width="1" stroke-dasharray="4 2"/>
+                                </svg>
                             <?php endif; ?>
                         </div>
                         <div class="flex-grow-1 min-w-0">
@@ -58,7 +79,15 @@
                                     <h6 class="text-zinc-200 fw-bold mb-0 text-xs text-truncate"><?php echo $item['name_ar']; ?></h6>
                                     <p class="text-zinc-700 m-0" style="font-size: 8px;"><?php echo $item['category_name']; ?></p>
                                 </div>
-                                <span class="text-amber-500 fw-bold text-xs"><?php echo formatCurrency($item['price']); ?></span>
+                                <div class="text-end">
+                                    <div class="d-flex align-items-center bg-zinc-900 rounded-pill px-2 py-1 border border-zinc-800 focus-within:border-amber-500/50 transition-all">
+                                        <input type="number" step="0.01" 
+                                               class="bg-transparent border-0 text-amber-500 fw-bold text-[11px] w-12 text-center p-0 shadow-none outline-none price-quick-edit" 
+                                               value="<?php echo $item['price']; ?>"
+                                               onchange="quickUpdatePrice(<?php echo $item['id']; ?>, this)">
+                                        <span class="text-zinc-700 text-[9px] fw-bold me-1">ر.س</span>
+                                    </div>
+                                </div>
                             </div>
                             <p class="text-zinc-600 mb-0 italic text-truncate mt-1" style="font-size: 9px;"><?php echo $item['ingredients']; ?></p>
                         </div>
@@ -159,7 +188,29 @@
     </div>
 </div>
 
+<!-- نافذة تأكيد الحذف -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-zinc-950 border-zinc-800">
+            <div class="modal-body p-4 text-center">
+                <div class="bg-red-500/10 w-12 h-12 rounded-full d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i data-lucide="alert-triangle" class="text-red-500"></i>
+                </div>
+                <h6 class="text-white fw-bold mb-2">هل أنت متأكد؟</h6>
+                <p class="text-zinc-500 text-[10px] mb-4">لا يمكن التراجع عن هذه العملية بعد إتمامها.</p>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-zinc-900 text-zinc-400 text-[10px] flex-grow-1 py-2" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger text-[10px] flex-grow-1 py-2 fw-bold">حذف نهائي</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+let deleteContext = { type: null, id: null };
+const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+
 function editCategory(id, name, type) {
     document.getElementById('cat_id').value = id;
     document.getElementById('cat_name').value = name;
@@ -202,8 +253,17 @@ async function handleSubmit(formId, apiEndpoint) {
     });
 }
 
-async function deleteData(type, id) {
-    if(!confirm('هل أنت متأكد من الحذف؟')) return;
+function deleteData(type, id) {
+    deleteContext = { type, id };
+    deleteModal.show();
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+    const { type, id } = deleteContext;
+    const btn = document.getElementById('confirmDeleteBtn');
+    btn.disabled = true;
+    btn.innerText = 'جاري الحذف...';
+
     try {
         const response = await fetch('api/delete_item.php', {
             method: 'POST',
@@ -215,11 +275,79 @@ async function deleteData(type, id) {
             location.reload();
         } else {
             alert(res.message);
+            btn.disabled = false;
+            btn.innerText = 'حذف نهائي';
         }
     } catch (err) {
         alert('حدث خطأ أثناء الحذف');
+        btn.disabled = false;
+        btn.innerText = 'حذف نهائي';
+    }
+});
+
+async function quickUpdatePrice(id, input) {
+    const originalBorder = input.parentElement.style.borderColor;
+    input.parentElement.style.borderColor = '#f59e0b';
+    
+    try {
+        const response = await fetch('api/update_price.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, price: input.value })
+        });
+        const res = await response.json();
+        if(res.success) {
+            input.parentElement.style.borderColor = '#10b981';
+            setTimeout(() => {
+                input.parentElement.style.borderColor = '';
+            }, 2000);
+        } else {
+            alert('خطأ في التحديث: ' + res.message);
+            input.parentElement.style.borderColor = '#ef4444';
+        }
+    } catch (err) {
+        alert('حدث خطأ أثناء الاتصال بالخادم');
+        input.parentElement.style.borderColor = '#ef4444';
     }
 }
+
+let activeCategoryId = 'all';
+
+function filterProducts(categoryId, btn) {
+    activeCategoryId = categoryId;
+    // تحديث حالة الأزرار
+    document.querySelectorAll('.category-filter-btn').forEach(el => {
+        el.classList.remove('active', 'bg-amber-500/10', 'border-amber-500/20');
+        el.classList.add('bg-zinc-950', 'border-zinc-800');
+        el.querySelector('span').classList.remove('text-amber-500');
+        el.querySelector('span').classList.add('text-white');
+    });
+    
+    btn.classList.add('active', 'bg-amber-500/10', 'border-amber-500/20');
+    btn.classList.remove('bg-zinc-950', 'border-zinc-800');
+    btn.querySelector('span').classList.remove('text-white');
+    btn.querySelector('span').classList.add('text-amber-500');
+
+    applyFilters();
+}
+
+function applyFilters() {
+    const query = document.getElementById('menuSearch').value.toLowerCase();
+    const items = document.querySelectorAll('.product-item');
+    
+    items.forEach(item => {
+        const matchCategory = (activeCategoryId === 'all' || item.getAttribute('data-category') == activeCategoryId);
+        const matchSearch = item.getAttribute('data-search').toLowerCase().includes(query);
+        
+        if (matchCategory && matchSearch) {
+            item.classList.remove('d-none');
+        } else {
+            item.classList.add('d-none');
+        }
+    });
+}
+
+document.getElementById('menuSearch').addEventListener('input', applyFilters);
 
 handleSubmit('categoryForm', 'save_category.php');
 handleSubmit('productForm', 'save_product.php');

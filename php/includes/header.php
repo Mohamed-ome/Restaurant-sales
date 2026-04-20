@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مطعم المنطقة - POS</title>
+    <title>منتزه حاتم السياحي - POS</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <!-- Custom Elegant Dark CSS -->
@@ -34,7 +34,7 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php') {
         </div>
         
         <div style="flex: 2;" class="text-center">
-            <h4 class="mb-0 text-white fw-bold italic tracking-tighter">مطعم المنطقة</h4>
+            <h4 class="mb-0 text-white fw-bold italic tracking-tighter">منتزه حاتم السياحي</h4>
             <p class="text-zinc-600 mb-0" style="font-size: 8px; letter-spacing: 2px;">PREMIUM POS SYSTEM</p>
         </div>
 

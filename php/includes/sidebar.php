@@ -4,7 +4,7 @@
             <i data-lucide="store" class="text-dark" style="width: 24px; height: 24px;"></i>
         </div>
         <div>
-            <h6 class="text-white fw-bold mb-0">مطعم المنطقة</h6>
+            <h6 class="text-white fw-bold mb-0">منتزه حاتم السياحي</h6>
             <p class="text-zinc-500 mb-0 uppercase tracking-widest" style="font-size: 8px;">المنطقة الوسطى</p>
         </div>
     </div>

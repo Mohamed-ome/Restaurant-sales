@@ -51,7 +51,7 @@ export default function App() {
               <Store className="text-zinc-900 w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-zinc-100 font-bold text-lg leading-tight">مطعم المنطقة</h1>
+              <h1 className="text-zinc-100 font-bold text-lg leading-tight">منتزه حاتم السياحي</h1>
               <p className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase">المنطقة الوسطى</p>
             </div>
           </div>
@@ -152,54 +152,96 @@ export default function App() {
         </div>
       </main>
 
-      {/* Print-only Invoice Template */}
-      <div className="hidden print:block p-8 bg-white text-slate-900 min-h-screen" dir="rtl">
-        <div className="text-center mb-8 border-b-2 border-slate-900 pb-4">
-          <h1 className="text-2xl font-black mb-1">مطعم المنطقة</h1>
-          <p className="text-sm">المنطقة الصناعية - الفرع الرئيسي</p>
-          <p className="text-sm">هاتف: 0123456789</p>
-        </div>
+      {/* Print-only Invoice Templates */}
+      <div id="invoice-print-container" className="hidden print:block bg-white text-slate-900 min-h-screen font-sans" dir="rtl">
         
-        <div className="flex justify-between mb-6 text-sm">
-          <div>
-            <p className="font-bold">التاريخ: {new Date().toLocaleDateString('ar-EG')}</p>
-            <p>الوقت: {new Date().toLocaleTimeString('ar-EG')}</p>
+        {/* Customer Receipt Template (Detailed) */}
+        <div className="customer-receipt hidden p-8">
+          <div className="text-center mb-6 border-b-2 border-slate-900 pb-4">
+            <h1 className="text-2xl font-black mb-1">منتزه حاتم السياحي</h1>
+            <p className="text-sm">المنطقة الصناعية - الفرع الرئيسي</p>
+            <p className="text-sm">هاتف: 0123456789</p>
           </div>
-          <div className="text-left">
-            <p className="font-bold">رقم الفاتورة: #INV-{Date.now().toString().slice(-6)}</p>
-            <p>اسم الكاشير: {currentUser?.name}</p>
-          </div>
-        </div>
-
-        <table className="w-full text-right mb-8">
-          <thead>
-            <tr className="border-y border-slate-300">
-              <th className="py-2">المنتج</th>
-              <th className="py-2 text-center">الكمية</th>
-              <th className="py-2 text-left">السعر</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            <tr className="border-b border-slate-100">
-              <td className="py-4 font-bold">نموذج طلب تجريبي</td>
-              <td className="py-4 text-center">1</td>
-              <td className="py-4 text-left">---</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div className="flex justify-end border-t-2 border-slate-900 pt-4">
-          <div className="w-full max-w-[200px] space-y-1">
-            <div className="flex justify-between font-bold">
-              <span>الإجمالي:</span>
-              <span>--- ج.م</span>
+          
+          <div className="flex justify-between mb-6 text-[10px]">
+            <div>
+              <p className="font-bold">التاريخ: {new Date().toLocaleDateString('ar-EG')}</p>
+              <p>الوقت: {new Date().toLocaleTimeString('ar-EG')}</p>
+            </div>
+            <div className="text-left">
+              <p className="font-bold">رقم الفاتورة: #INV-{Date.now().toString().slice(-6)}</p>
+              <p>البائع: {currentUser?.name}</p>
             </div>
           </div>
+
+          <table className="w-full text-right mb-6 text-sm">
+            <thead>
+              <tr className="border-y border-slate-900">
+                <th className="py-2">الصنف</th>
+                <th className="py-2 text-center">الكمية</th>
+                <th className="py-2 text-left">السعر</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {/* In a real app, we'd pass the actual cart items here or use a shared state */}
+              <tr className="border-b border-slate-100">
+                <td className="py-3 font-bold">يرجى تأكيد الطلب قبل الطباعة</td>
+                <td className="py-3 text-center">1</td>
+                <td className="py-3 text-left">---</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div className="flex justify-end border-t-2 border-slate-900 pt-4">
+            <div className="w-full max-w-[200px] space-y-1 text-sm">
+              <div className="flex justify-between font-bold text-lg">
+                <span>الإجمالي:</span>
+                <span>--- ج.م</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center text-[10px] text-slate-500">
+            <p>شكرًا لزيارتكم منتزه حاتم السياحي!</p>
+            <p className="mt-1">نتمنى لكم وجبة شهية • الرقم الضريبي: 123-456-789</p>
+          </div>
         </div>
 
-        <div className="mt-12 text-center text-xs text-slate-500">
-          <p>شكرًا لزيارتكم مطعم المنطقة!</p>
-          <p>نتمنى لكم وجبة شهية</p>
+        {/* Kitchen/Order Ticket Template (Simplified) */}
+        <div className="kitchen-ticket hidden p-8">
+          <div className="text-center mb-6 border-b-2 border-slate-300 pb-4">
+            <h1 className="text-3xl font-black mb-1">طلب تجهيز مطبخ</h1>
+            <p className="text-xl font-bold">#{Date.now().toString().slice(-4)}</p>
+          </div>
+          
+          <div className="flex justify-between mb-6 text-sm">
+            <div>
+              <p className="font-bold">التاريخ: {new Date().toLocaleDateString('ar-EG')}</p>
+              <p>الوقت: {new Date().toLocaleTimeString('ar-EG')}</p>
+            </div>
+            <div className="text-left font-bold text-lg">
+              محلي / Local
+            </div>
+          </div>
+
+          <table className="w-full text-right mb-8">
+            <thead>
+              <tr className="border-y-2 border-black">
+                <th className="py-3 text-xl">الصنف</th>
+                <th className="py-3 text-center text-xl font-black">العدد</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-slate-300">
+                <td className="py-6 text-2xl font-black">جاري تجهيز الطلب...</td>
+                <td className="py-6 text-center text-3xl font-black">1</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div className="mt-12 border-t border-slate-300 pt-4 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest italic opacity-50">KITCHEN COPY • نسخة المطبخ</p>
+          </div>
         </div>
       </div>
 
@@ -209,7 +251,13 @@ export default function App() {
           aside, header, main {
             display: none !important;
           }
-          .print-only, .print-block {
+          #invoice-print-container {
+            display: block !important;
+          }
+          body.print-customer .customer-receipt {
+            display: block !important;
+          }
+          body.print-kitchen .kitchen-ticket {
             display: block !important;
           }
           body {
