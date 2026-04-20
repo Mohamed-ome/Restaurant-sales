@@ -229,6 +229,7 @@ body.light-mode .text-zinc-700 { color: #cbd5e1 !important; }
 }
 
 /* Responsive Printing Style */
+/* Optimized for Xprinter Q807K (80mm Thermal Printer) */
 @media print {
     body * {
         visibility: hidden;
@@ -241,11 +242,14 @@ body.light-mode .text-zinc-700 { color: #cbd5e1 !important; }
         position: absolute;
         left: 0;
         top: 0;
-        width: 100%;
+        width: 80mm !important;
+        padding: 2mm !important;
+        margin: 0 auto !important;
         color: #000 !important;
         background: #fff !important;
         direction: rtl;
         font-family: 'Vazirmatn', 'Inter', system-ui, -apple-system, sans-serif !important;
+        box-sizing: border-box;
     }
     .main-content, .sidebar, .header, .glass-card, button, aside, footer {
         display: none !important;
@@ -254,9 +258,24 @@ body.light-mode .text-zinc-700 { color: #cbd5e1 !important; }
         background: white !important;
         height: auto !important;
         overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     @page {
         margin: 0;
-        size: auto;
+        size: 80mm auto;
+    }
+    
+    /* Ensure tables take full width of the 80mm paper */
+    .receipt-print table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    
+    /* High contrast for thermal printing */
+    .receipt-print * {
+        color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }

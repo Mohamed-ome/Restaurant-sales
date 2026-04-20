@@ -46,6 +46,10 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php') {
                 <i data-lucide="sun" class="text-amber-500" style="width: 14px; height: 14px;"></i>
              </button>
 
+             <a href="logout.php" class="btn btn-outline-danger p-1.5 rounded-pill shadow-sm transition-all hover:scale-110 d-flex align-items-center justify-content-center" title="تسجيل الخروج">
+                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+             </a>
+
              <div class="glass-card px-3 py-1 d-flex align-items-center gap-2">
                 <div class="bg-zinc-800 rounded p-1">
                     <i data-lucide="user" class="text-zinc-500" style="width: 14px; height: 14px;"></i>

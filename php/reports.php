@@ -4,9 +4,15 @@
 $filter = $_GET['filter'] ?? 'daily';
 $from_date = $_GET['from'] ?? '';
 $to_date = $_GET['to'] ?? '';
+$product_id = $_GET['product_id'] ?? '';
 
 $where_clause = "WHERE 1=1";
 $params = [];
+
+if ($product_id) {
+    $where_clause .= " AND o.id IN (SELECT order_id FROM order_items WHERE product_id = ?)";
+    $params[] = $product_id;
+}
 
 if ($filter === 'daily') {
     $where_clause .= " AND DATE(o.created_at) = CURDATE()";
@@ -45,19 +51,30 @@ $period_total = $period_total_q->fetchColumn();
         <div class="glass-card p-2 mb-2">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 px-1">
                 <div class="d-flex gap-1 bg-zinc-900 p-0.5 rounded-pill border border-zinc-800">
-                    <a href="?filter=daily" class="btn <?php echo $filter == 'daily' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">يومي</a>
-                    <a href="?filter=weekly" class="btn <?php echo $filter == 'weekly' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">أسبوعي</a>
-                    <a href="?filter=monthly" class="btn <?php echo $filter == 'monthly' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">شهري</a>
-                    <a href="?filter=all" class="btn <?php echo $filter == 'all' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">الكل</a>
+                    <a href="?filter=daily&product_id=<?php echo $product_id; ?>" class="btn <?php echo $filter == 'daily' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">يومي</a>
+                    <a href="?filter=weekly&product_id=<?php echo $product_id; ?>" class="btn <?php echo $filter == 'weekly' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">أسبوعي</a>
+                    <a href="?filter=monthly&product_id=<?php echo $product_id; ?>" class="btn <?php echo $filter == 'monthly' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">شهري</a>
+                    <a href="?filter=all&product_id=<?php echo $product_id; ?>" class="btn <?php echo $filter == 'all' ? 'btn-accent' : 'btn-link text-zinc-500'; ?> px-3 py-1 text-[9px] fw-bold rounded-pill text-decoration-none">الكل</a>
                 </div>
 
                 <form method="GET" class="d-flex align-items-center gap-2">
-                    <input type="hidden" name="filter" value="custom">
-                    <input type="date" name="from" value="<?php echo $from_date; ?>" class="form-control bg-zinc-950 border-zinc-800 text-zinc-500 rounded-pill text-[9px] py-1 shadow-none" style="width: 110px;">
-                    <span class="text-zinc-700 text-[9px]">إلى</span>
-                    <input type="date" name="to" value="<?php echo $to_date; ?>" class="form-control bg-zinc-950 border-zinc-800 text-zinc-500 rounded-pill text-[9px] py-1 shadow-none" style="width: 110px;">
+                    <select name="product_id" class="form-select bg-zinc-950 border-zinc-800 text-zinc-500 rounded-pill text-[9px] py-1 shadow-none" style="width: 140px;" onchange="this.form.submit()">
+                        <option value="">جميع الأصناف</option>
+                        <?php 
+                        $all_products = $pdo->query("SELECT id, name_ar FROM products ORDER BY name_ar ASC")->fetchAll();
+                        foreach($all_products as $p): ?>
+                            <option value="<?php echo $p['id']; ?>" <?php echo $product_id == $p['id'] ? 'selected' : ''; ?>><?php echo $p['name_ar']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <input type="hidden" name="filter" value="<?php echo $filter; ?>">
+                    <?php if($filter == 'custom'): ?>
+                        <input type="date" name="from" value="<?php echo $from_date; ?>" class="form-control bg-zinc-950 border-zinc-800 text-zinc-500 rounded-pill text-[9px] py-1 shadow-none" style="width: 110px;">
+                        <span class="text-zinc-700 text-[9px]">إلى</span>
+                        <input type="date" name="to" value="<?php echo $to_date; ?>" class="form-control bg-zinc-950 border-zinc-800 text-zinc-500 rounded-pill text-[9px] py-1 shadow-none" style="width: 110px;">
+                    <?php endif; ?>
                     <button type="submit" class="btn btn-zinc-800 p-1 rounded-circle border-zinc-700">
-                        <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i>
+                        <i data-lucide="search" style="width: 14px; height: 14px;"></i>
                     </button>
                 </form>
 

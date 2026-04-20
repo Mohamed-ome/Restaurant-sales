@@ -173,8 +173,18 @@
 </div>
 
 <script>
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('hatem_pos_cart')) || [];
     
+    function saveCart() {
+        localStorage.setItem('hatem_pos_cart', JSON.stringify(cart));
+    }
+    
+    // Initial UI Update
+    window.addEventListener('DOMContentLoaded', () => {
+        updateCartUI();
+        calculateTotals();
+    });
+
     // Add to Cart
     document.querySelectorAll('.add-to-cart').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -192,6 +202,7 @@
             } else {
                 cart.push(product);
             }
+            saveCart();
             updateCartUI();
         });
     });
@@ -199,50 +210,56 @@
     function updateCartUI() {
         const cartContainer = document.getElementById('cartContainer');
         const emptyCart = document.getElementById('emptyCart');
+        const scrollPos = cartContainer.scrollTop;
         
-        if (emptyCart) {
-            if (cart.length === 0) {
-                cartContainer.innerHTML = '';
-                cartContainer.appendChild(emptyCart);
-                emptyCart.classList.remove('d-none');
-                cartContainer.classList.remove('overflow-y-auto');
-            } else {
-                emptyCart.classList.add('d-none');
-                cartContainer.classList.add('overflow-y-auto');
-                cartContainer.innerHTML = cart.map((item, index) => {
-                    return `
-                    <div class="d-flex align-items-center justify-content-between p-2 bg-zinc-950 rounded-3 border border-zinc-800 transition-all hover:bg-zinc-900 group">
-                        <div class="flex-grow-1 min-w-0">
-                            <h6 class="text-white text-[12px] fw-bold mb-0 text-truncate">${item.name}</h6>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-zinc-500 text-[10px]">${item.price} ج.س</span>
-                                <span class="text-amber-500 fw-bold text-[11px] bg-amber-500/10 px-1.5 rounded">إجمالي: ${(item.price * item.quantity).toFixed(2)} ج.س</span>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-pill p-0.5">
-                            <button class="btn btn-link link-zinc-500 p-1 text-zinc-500 hover:text-white" onclick="updateQty(${index}, -1)">
-                                <i data-lucide="minus" style="width: 12px; height: 12px;"></i>
-                            </button>
-                            <span class="text-white text-[10px] fw-bold px-1 min-w-[20px] text-center">${item.quantity}</span>
-                            <button class="btn btn-link link-zinc-500 p-1 text-zinc-500 hover:text-white" onclick="updateQty(${index}, 1)">
-                                <i data-lucide="plus" style="width: 12px; height: 12px;"></i>
-                            </button>
+        if (cart.length === 0) {
+            cartContainer.innerHTML = `
+                <div class="my-auto text-center opacity-25 py-4" id="emptyCart">
+                    <i data-lucide="shopping-cart" class="text-zinc-500 mb-2" style="width: 24px; height: 24px;"></i>
+                    <p class="text-[9px] fw-bold tracking-tight">السلة فارغة</p>
+                </div>
+            `;
+            cartContainer.classList.remove('overflow-y-auto');
+            lucide.createIcons();
+        } else {
+            cartContainer.classList.add('overflow-y-auto');
+            cartContainer.innerHTML = cart.map((item, index) => {
+                return `
+                <div class="d-flex align-items-center justify-content-between p-2 bg-zinc-950 rounded-3 border border-zinc-800 transition-all hover:bg-zinc-900 group animate-in fade-in slide-in-from-right-2 duration-200">
+                    <div class="flex-grow-1 min-w-0">
+                        <h6 class="text-white text-[12px] fw-bold mb-0 text-truncate">${item.name}</h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-zinc-500 text-[10px]">${item.price} ج.س</span>
+                            <span class="text-amber-500 fw-bold text-[11px] bg-amber-500/10 px-1.5 rounded">إجمالي: ${(item.price * item.quantity).toFixed(2)} ج.س</span>
                         </div>
                     </div>
-                    `;
-                }).join('');
-                lucide.createIcons();
-            }
+                    <div class="d-flex align-items-center bg-zinc-900 border border-zinc-800 rounded-pill p-1 gap-1">
+                        <button class="btn btn-zinc-800 p-1 text-zinc-400 hover:text-white rounded-circle shadow-sm" onclick="updateQty(${index}, -1)">
+                            <i data-lucide="minus" style="width: 14px; height: 14px;"></i>
+                        </button>
+                        <span class="text-white text-[11px] fw-bold px-1 min-w-[24px] text-center">${item.quantity}</span>
+                        <button class="btn btn-zinc-800 p-1 text-zinc-400 hover:text-white rounded-circle shadow-sm" onclick="updateQty(${index}, 1)">
+                            <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            
+            cartContainer.scrollTop = scrollPos;
+            lucide.createIcons();
         }
         
         calculateTotals();
     }
 
     function updateQty(index, delta) {
+        if (!cart[index]) return;
         cart[index].quantity += delta;
         if (cart[index].quantity <= 0) {
             cart.splice(index, 1);
         }
+        saveCart();
         updateCartUI();
     }
 
