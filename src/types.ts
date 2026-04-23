@@ -34,7 +34,7 @@ export interface Order {
   transactionId?: string; // 4-digit reference for Bankak
 }
 
-export type UserRole = 'ADMIN' | 'MANAGER' | 'WAITER';
+export type UserRole = 'ADMIN' | 'MANAGER';
 
 export interface User {
   id: string;

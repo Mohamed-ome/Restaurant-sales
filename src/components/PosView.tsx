@@ -86,7 +86,7 @@ export default function PosView() {
 
   const confirmOrder = () => {
     if (paymentMethod === 'BANKAK' && transactionId.length !== 4) {
-      alert('يرجى إدخال رقم العملية (4 أرقام)');
+      console.warn('يرجى إدخال رقم العملية (4 أرقام)');
       return;
     }
 
@@ -229,55 +229,84 @@ export default function PosView() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-          {cart.map((item) => (
-            <div key={item.product.id} className="flex flex-col gap-2 bg-zinc-950/40 p-3 rounded-xl border border-transparent hover:border-zinc-800 transition-all group">
-              <div className="flex justify-between items-start gap-4">
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-zinc-200 truncate">{item.product.nameAr}</h4>
-                  <p className="text-[10px] text-zinc-500 tracking-wide">{(item.product.price * item.quantity).toFixed(2)} ج.س</p>
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 relative">
+          <AnimatePresence initial={false}>
+            {cart.map((item) => (
+              <motion.div 
+                key={item.product.id}
+                layout
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                drag="x"
+                dragConstraints={{ left: -100, right: 0 }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -60) {
+                    removeFromCart(item.product.id);
+                  }
+                }}
+                className="relative bg-zinc-950/40 rounded-xl border border-transparent hover:border-zinc-800 transition-all group overflow-hidden"
+              >
+                {/* Swipe Background */}
+                <div className="absolute inset-0 bg-red-600 flex items-center justify-end px-6 -z-10">
+                  <Trash2 className="w-5 h-5 text-white" />
                 </div>
-                <button 
-                  onClick={() => removeFromCart(item.product.id)}
-                  className="text-zinc-700 hover:text-red-500 transition-colors p-1"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-              
-              <div className="flex items-center justify-between mt-1 pt-2 border-t border-zinc-900/50">
-                <div className="flex items-center bg-zinc-900 rounded-lg p-0.5 border border-zinc-800">
-                  <button 
-                    onClick={() => updateQuantity(item.product.id, -1)}
-                    className="w-7 h-7 rounded-md bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors"
-                  >
-                    <Minus className="w-3 h-3" />
-                  </button>
-                  <input 
-                    type="number"
-                    min="1"
-                    className="w-10 bg-transparent text-center text-xs font-bold text-zinc-100 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    value={item.quantity}
-                    onChange={(e) => setQuantity(item.product.id, parseInt(e.target.value))}
-                  />
-                  <button 
-                    onClick={() => updateQuantity(item.product.id, 1)}
-                    className="w-7 h-7 rounded-md bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors"
-                  >
-                    <Plus className="w-3 h-3" />
-                  </button>
+
+                <div className="bg-zinc-950/40 p-3 rounded-xl">
+                  <div className="flex justify-between items-start gap-4 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[13px] font-bold text-zinc-100 truncate mb-0.5">{item.product.nameAr}</h4>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-amber-500">{(item.product.price * item.quantity).toFixed(2)} ج.س</span>
+                        <span className="text-[9px] text-zinc-600">({item.product.price} للواحد)</span>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => removeFromCart(item.product.id)}
+                      className="text-zinc-700 hover:text-red-500 transition-colors p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-zinc-900/50">
+                    <div className="flex items-center gap-1">
+                      <div className="flex items-center bg-zinc-900 rounded-xl p-1 border border-zinc-800">
+                        <button 
+                          onClick={() => updateQuantity(item.product.id, -1)}
+                          className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 text-zinc-400 transition-colors active:scale-90"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <div className="w-10 text-center text-xs font-black text-zinc-100">
+                          {item.quantity}
+                        </div>
+                        <button 
+                          onClick={() => updateQuantity(item.product.id, 1)}
+                          className="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center hover:bg-amber-500 text-zinc-950 transition-colors active:scale-90"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-bold">
+                      <Utensils className="w-3 h-3" />
+                      <span>جاهز للتجهيز</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-[10px] font-bold text-amber-500/80">
-                  سعر الوحدة: {item.product.price}
-                </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
           {cart.length === 0 && (
-            <div className="flex-1 flex flex-col items-center justify-center gap-3 opacity-20 py-20">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex-1 flex flex-col items-center justify-center gap-3 opacity-20 py-20"
+            >
               <ShoppingCart className="w-10 h-10 text-zinc-500" />
               <p className="text-xs font-medium uppercase tracking-tight">السلة فارغة</p>
-            </div>
+            </motion.div>
           )}
         </div>
 

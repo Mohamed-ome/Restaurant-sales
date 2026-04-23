@@ -48,9 +48,11 @@ CREATE TABLE `categories` (
 -- Dumping data for table `categories`
 --
 
-INSERT INTO `categories` (`name`, `type`) VALUES
-('المأكولات', 'FOOD'),
-('العصائر', 'JUICE');
+INSERT INTO `categories` (`id`, `name`, `type`) VALUES
+(1, 'المأكولات', 'FOOD'),
+(2, 'العصائر', 'JUICE'),
+(3, 'الأسماك', 'FOOD'),
+(4, 'المشويات', 'FOOD');
 
 -- --------------------------------------------------------
 
@@ -80,11 +82,12 @@ CREATE TABLE `products` (
 INSERT INTO `products` (`category_id`, `name`, `name_ar`, `price`, `ingredients`, `in_stock`, `min_threshold`, `image`) VALUES
 (1, 'Margherita Pizza', 'بيتزا مارجريتا', 120.00, 'طماطم، موتزاريلا، ريحان', 45, 10, 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=1000&auto=format&fit=crop'),
 (1, 'Chicken Burger', 'برجر دجاج', 85.00, 'دجاج، خس، صوص سري', 30, 5, 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop'),
-(1, 'Grilled Fish', 'سمك مشوي', 150.00, 'سمك طازج مشوي على الفحم بتتبيلة مميزة', 20, 5, 'https://images.unsplash.com/photo-1594002494803-510702672728?q=80&w=1000&auto=format&fit=crop'),
-(1, 'Fried Fish', 'سمك مقلي', 140.00, 'سمك مقلي مقرمش مع أرز وصوص', 25, 5, 'https://images.unsplash.com/photo-1534604973900-c41ab4c5e636?q=80&w=1000&auto=format&fit=crop'),
 (1, 'French Fries', 'فرايد', 40.00, 'أصابع بطاطس مقرمشة مملحة', 100, 20, 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=1000&auto=format&fit=crop'),
-(1, 'Mixed Grill', 'مشويات مشكلة', 200.00, 'تشكيلة من كباب، شيش طاووق، وريش مشوية', 15, 5, 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?q=80&w=1000&auto=format&fit=crop'),
-(2, 'Mango Juice', 'عصير مانجو', 45.00, 'مانجو طازج، سكر', 12, 15, 'https://images.unsplash.com/photo-1553531384-cc64ac80f931?q=80&w=1000&auto=format&fit=crop'),
+(3, 'Fried Tilapia', 'سمك بلطي مقلي', 150.00, 'سمك بلطي، تتبيلة خاصة، ليمون', 20, 5, 'https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?q=80&w=1000&auto=format&fit=crop'),
+(3, 'Grilled Sea Bream', 'سمك قاروص مشوي', 250.00, 'سمك قاروص، أعشاب، زيت زيتون', 15, 5, 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=1000&auto=format&fit=crop'),
+(4, 'Mixed Grill', 'مشاوي مشكلة', 320.00, 'كفتة، شيش طاووق، كباب', 15, 5, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop'),
+(4, 'Grilled Chicken', 'دجاج مشوي على الفحم', 180.00, 'نصف دجاجة، ثومية، خبز', 30, 10, 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=1000&auto=format&fit=crop'),
+(2, 'Mango Juice', 'عصير مانجو', 45.00, 'مانجو طازج، سكر', 12, 15, 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=1000&auto=format&fit=crop'),
 (2, 'Lemon Mint', 'ليمون نعناع', 35.00, 'ليمون، نعناع، ثلج', 80, 10, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=1000&auto=format&fit=crop');
 
 -- --------------------------------------------------------

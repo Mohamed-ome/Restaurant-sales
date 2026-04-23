@@ -26,13 +26,13 @@ export default function App() {
   const { activeView, setActiveView, currentUser, logout } = useStore();
 
   const navItems = [
-    { id: 'pos', label: 'نقاط البيع', icon: Store, roles: ['ADMIN', 'MANAGER', 'WAITER'] },
+    { id: 'pos', label: 'نقاط البيع', icon: Store, roles: ['ADMIN', 'MANAGER'] },
     { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard, roles: ['ADMIN', 'MANAGER'] },
     { id: 'sales_insights', label: 'تحليلات المبيعات', icon: BarChart3, roles: ['ADMIN', 'MANAGER'] },
     { id: 'menu', label: 'قائمة الطعام', icon: MenuIcon, roles: ['ADMIN', 'MANAGER'] },
     { id: 'inventory', label: 'المخزون', icon: PackageSearch, roles: ['ADMIN', 'MANAGER'] },
     { id: 'reports', label: 'السجلات', icon: BarChart3, roles: ['ADMIN'] },
-    { id: 'shipping', label: 'الشحن والتوصيل', icon: Truck, roles: ['ADMIN', 'MANAGER', 'WAITER'] },
+    { id: 'shipping', label: 'الشحن والتوصيل', icon: Truck, roles: ['ADMIN', 'MANAGER'] },
   ];
 
   const filteredNavItems = navItems.filter(item => 
@@ -125,7 +125,7 @@ export default function App() {
               <div className="text-right">
                 <p className="text-xs font-bold text-zinc-100 leading-none mb-1">{currentUser.name}</p>
                 <p className="text-[10px] text-zinc-500 font-medium leading-none">
-                  {currentUser.role === 'ADMIN' ? 'مدير النظام' : currentUser.role === 'MANAGER' ? 'مشرف' : 'موظف مبيعات'}
+                  {currentUser.role === 'ADMIN' ? 'مدير النظام' : 'مشرف الصالة'}
                 </p>
               </div>
             </div>

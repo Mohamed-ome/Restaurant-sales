@@ -249,10 +249,10 @@ async function handleSubmit(formId, apiEndpoint) {
             if(res.success) {
                 location.reload();
             } else {
-                alert(res.message);
+                console.warn(res.message);
             }
         } catch (err) {
-            alert('حدث خطأ أثناء الحفظ');
+            console.error('حدث خطأ أثناء الحفظ');
         }
     });
 }
@@ -278,12 +278,12 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async () =
         if(res.success) {
             location.reload();
         } else {
-            alert(res.message);
+            console.warn(res.message);
             btn.disabled = false;
             btn.innerText = 'حذف نهائي';
         }
     } catch (err) {
-        alert('حدث خطأ أثناء الحذف');
+        console.error('حدث خطأ أثناء الحذف');
         btn.disabled = false;
         btn.innerText = 'حذف نهائي';
     }
@@ -306,11 +306,11 @@ async function quickUpdatePrice(id, input) {
                 input.parentElement.style.borderColor = '';
             }, 2000);
         } else {
-            alert('خطأ في التحديث: ' + res.message);
+            console.error('خطأ في التحديث: ' + res.message);
             input.parentElement.style.borderColor = '#ef4444';
         }
     } catch (err) {
-        alert('حدث خطأ أثناء الاتصال بالخادم');
+        console.error('حدث خطأ أثناء الاتصال بالخادم');
         input.parentElement.style.borderColor = '#ef4444';
     }
 }

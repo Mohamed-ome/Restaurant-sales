@@ -32,21 +32,26 @@ export const useStore = create<StoreState>()(
       categories: [
         { id: '1', name: 'المأكولات', type: 'FOOD' },
         { id: '2', name: 'العصائر', type: 'JUICE' },
+        { id: '3', name: 'الأسماك', type: 'FOOD' },
+        { id: '4', name: 'المشويات', type: 'FOOD' },
       ],
       products: [
-        { id: 'p1', categoryId: '1', name: 'Margherita Pizza', nameAr: 'بيتزا مارجريتا', ingredients: ['طماطم', 'موتزاريلا', 'ريحان'], price: 120, inStock: 50 },
-        { id: 'p2', categoryId: '1', name: 'Chicken Burger', nameAr: 'برجر دجاج', ingredients: ['دجاج', 'خس', 'صوص سري'], price: 85, inStock: 30 },
-        { id: 'p3', categoryId: '2', name: 'Mango Juice', nameAr: 'عصير مانجو', ingredients: ['مانجو طازج', 'سكر'], price: 45, inStock: 100 },
-        { id: 'p4', categoryId: '2', name: 'Lemon Mint', nameAr: 'ليمون نعناع', ingredients: ['ليمون', 'نعناع', 'ثلج'], price: 35, inStock: 80 },
+        { id: 'p1', categoryId: '1', name: 'Margherita Pizza', nameAr: 'بيتزا مارجريتا', ingredients: ['طماطم', 'موتزاريلا', 'ريحان'], price: 120, inStock: 50, image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p2', categoryId: '1', name: 'Chicken Burger', nameAr: 'برجر دجاج', ingredients: ['دجاج', 'خس', 'صوص سري'], price: 85, inStock: 30, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p3', categoryId: '2', name: 'Mango Juice', nameAr: 'عصير مانجو', ingredients: ['مانجو طازج', 'سكر'], price: 45, inStock: 100, image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p4', categoryId: '2', name: 'Lemon Mint', nameAr: 'ليمون نعناع', ingredients: ['ليمون', 'نعناع', 'ثلج'], price: 35, inStock: 80, image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p5', categoryId: '3', name: 'Fried Tilapia', nameAr: 'سمك بلطي مقلي', ingredients: ['سمك بلطي', 'تتبيلة خاصة', 'ليمون'], price: 150, inStock: 20, image: 'https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p6', categoryId: '3', name: 'Grilled Sea Bream', nameAr: 'سمك قاروص مشوي', ingredients: ['سمك قاروص', 'أعشاب', 'زيت زيتون'], price: 250, inStock: 15, image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p7', categoryId: '4', name: 'Mixed Grill', nameAr: 'مشاوي مشكلة', ingredients: ['كفتة', 'شيش طاووق', 'كباب'], price: 320, inStock: 25, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=200&auto=format&fit=crop' },
+        { id: 'p8', categoryId: '4', name: 'Grilled Chicken', nameAr: 'دجاج مشوي على الفحم', ingredients: ['نصف دجاجة', 'ثومية', 'خبز'], price: 180, inStock: 30, image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=200&auto=format&fit=crop' },
       ],
       orders: [],
       users: [
         { id: 'u1', username: 'admin', name: 'مدير النظام', role: 'ADMIN', pin: '1234' },
         { id: 'u2', username: 'manager', name: 'مشرف الصالة', role: 'MANAGER', pin: '2222' },
-        { id: 'u3', username: 'waiter', name: 'موظف مبيعات', role: 'WAITER', pin: '1111' },
       ],
       currentUser: null,
-      activeView: 'pos',
+      activeView: 'dashboard',
       
       setActiveView: (view) => set({ activeView: view }),
 
@@ -59,7 +64,7 @@ export const useStore = create<StoreState>()(
         return false;
       },
 
-      logout: () => set({ currentUser: null, activeView: 'pos' }),
+      logout: () => set({ currentUser: null, activeView: 'dashboard' }),
       
       addCategory: (category) => set((state) => ({
         categories: [...state.categories, { ...category, id: Math.random().toString(36).substr(2, 9) }]
