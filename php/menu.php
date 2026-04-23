@@ -51,7 +51,12 @@
                         <input type="text" id="menuSearch" class="form-control bg-zinc-900 border-zinc-800 text-white rounded-end-pill shadow-none text-[9px]" placeholder="بحث في المنيو...">
                     </div>
                 </div>
-                <button class="btn btn-accent text-[9px] fw-bold px-3 py-1.5" data-bs-toggle="modal" data-bs-target="#productModal">إضافة صنف +</button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-zinc text-[9px] fw-bold px-3 py-1.5" onclick="location.reload()">
+                        <i data-lucide="save" style="width: 12px;" class="me-1"></i> حفظ التغييرات 
+                    </button>
+                    <button class="btn btn-accent text-[9px] fw-bold px-3 py-1.5" data-bs-toggle="modal" data-bs-target="#productModal">إضافة صنف +</button>
+                </div>
             </div>
 
             <div class="row row-cols-1 row-cols-md-2 g-2" id="productsContainer">

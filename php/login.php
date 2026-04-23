@@ -11,11 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
     
     if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_role'] = $user['role'];
-        header('Location: index.php');
-        exit;
+        if ($user['role'] === 'ADMIN' || $user['role'] === 'MANAGER') {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_role'] = $user['role'];
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            $error = 'غير مسموح لك بالدخول إلى لوحة التحكم';
+        }
     } else {
         $error = 'رمز PIN غير صحيح، حاول مرة أخرى';
     }

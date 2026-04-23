@@ -21,10 +21,6 @@
         ?>
         <p class="text-zinc-600 uppercase tracking-wider mb-2 px-2" style="font-size: 7px; font-weight: 700;">الرئيسية</p>
         
-        <a href="index.php" class="nav-link <?php echo isActive('index.php', $current_page); ?>">
-            <i data-lucide="store" style="width: 14px;"></i>
-            <span>نقطة البيع</span>
-        </a>
         <a href="dashboard.php" class="nav-link <?php echo isActive('dashboard.php', $current_page); ?>">
             <i data-lucide="layout-dashboard" style="width: 14px;"></i>
             <span>لوحة التحكم</span>

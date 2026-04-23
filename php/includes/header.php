@@ -63,7 +63,6 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php') {
                         $role = $_SESSION['user_role'] ?? '';
                         if($role == 'ADMIN') echo 'مدير النظام';
                         else if($role == 'MANAGER') echo 'مشرف الصالة';
-                        else echo 'موظف مبيعات';
                         ?>
                     </p>
                 </div>

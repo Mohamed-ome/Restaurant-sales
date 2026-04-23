@@ -17,47 +17,8 @@ if (!$data || empty($data['items'])) {
     exit;
 }
 
-try {
-    $pdo->beginTransaction();
+// Using OOP OrderManager
+$result = $orderManager->confirmOrder($data, $_SESSION['user_id'] ?? null);
 
-    // 1. Create Order
-    $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, payment_method, transaction_id, dining_option, notes) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([
-        $_SESSION['user_id'] ?? null,
-        $data['total'],
-        $data['payment_method'] ?? 'CASH',
-        $data['transaction_id'] ?? null,
-        $data['dining_option'] ?? 'DINEIN',
-        $data['notes'] ?? null
-    ]);
-    
-    $orderId = $pdo->lastInsertId();
-
-    // 2. Create Order Items & Update Stock
-    $itemStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, price_at_time) VALUES (?, ?, ?, ?)");
-    $stockStmt = $pdo->prepare("UPDATE products SET in_stock = in_stock - ? WHERE id = ?");
-
-    foreach ($data['items'] as $item) {
-        $itemStmt->execute([
-            $orderId,
-            $item['id'],
-            $item['quantity'],
-            $item['price']
-        ]);
-
-        $stockStmt->execute([
-            $item['quantity'],
-            $item['id']
-        ]);
-    }
-
-    $pdo->commit();
-    echo json_encode(['success' => true, 'order_id' => $orderId]);
-
-} catch (Exception $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-}
+echo json_encode($result);
 ?>
